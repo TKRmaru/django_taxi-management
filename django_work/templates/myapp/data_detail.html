@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<h1>運行記録詳細ページ</h1>
+<table class="detail_table">
+    <tr>
+        <th>日付</th>
+        <td>{{ object.date|date:'Y/m/d' }}</td>
+    </tr>
+    <tr>
+        <th>搬送車</th>
+        <td>{{ object.car }}</td>
+        <th>乗車タイプ</th>
+        <td>{% if object.ride_type == '迎車' %}迎車
+            {% elif object.ride_type == '賃走' %}賃走
+            {% elif object.ride_type == '回送' %}回送
+            {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>顧客名</th>
+        <td>{% if object.customer_name %}<a href="{% url 'myapp:customer_detail' object.customer_name.id %}">{{ object.customer_name }}</a>
+            {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>出発地</th>
+        <td><a href="{% url 'myapp:place_detail' object.place_from.id %}">{{ object.place_from }}</a>
+        {% if object.place_from.place_name == "自宅" and object.customer_name.prefecture %}<br>
+        {% if object.customer_name.zip_code %}――〒{{ object.customer_name.zip_code }}{% else %}{% endif %}
+            {{ object.customer_name.prefecture }} {% if object.customer_name.city %}{{ object.customer_name.city }} {% else %}{% endif %}{% if object.customer_name.bldg %}{{ object.customer_name.bldg }}{% else %}{% endif %}
+        {% else %}{% endif %}</td>
+        <th>到着地</th>
+        <td><a href="{% url 'myapp:place_detail' object.place_to.id %}">{{ object.place_to }}</a>
+        {% if object.place_to.place_name == "自宅" and object.customer_name.prefecture %}<br>
+        {% if object.customer_name.zip_code %}――〒{{ object.customer_name.zip_code }}{% else %}{% endif %}
+            {{ object.customer_name.prefecture }} {% if object.customer_name.city %}{{ object.customer_name.city }} {% else %}{% endif %}{% if object.customer_name.bldg %}{{ object.customer_name.bldg }}{% else %}{% endif %}
+        {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>出発時刻</th>
+        <td>{% if object.start_time %}{{ object.start_time }}
+            {% else %}{% endif %}</td>
+        <th>到着時刻</th>
+        <td>{% if object.arrival_time %}{{ object.arrival_time }}
+            {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>メーター(前)</th>
+        <td>{% if object.mileage_from %}{{ object.mileage_from|intcomma }} km
+            {% else %}{% endif %}</td>
+        <th>メーター(後)</th>
+        <td>{% if object.mileage_to %}{{ object.mileage_to|intcomma }} km
+            {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>走行距離</th>
+        <td>{% if object.distance %}{{ object.distance|intcomma }} km
+            {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>料金</th>
+        <td>{% if object.fare %}{{ object.fare|intcomma }} 円
+            {% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>ストレッチャー</th>
+        <td>{% if object.at_stretcher %}あり{% else %}なし{% endif %}</td>
+        <th>深夜割増</th>
+        <td>{% if object.at_night %}あり{% else %}なし{% endif %}</td>
+    </tr>
+    <tr>
+        <th>備考</th>
+        <td>{% if object.remarks %}{{ object.remarks }}{% else %}{% endif %}</td>
+    </tr>
+</table>
+<div class="btn_group">
+    <a href="{% url 'myapp:data_update' salesrecord.id %}">更新</a>
+    <a href="{% url 'myapp:data_delete' salesrecord.id %}">削除</a>
+</div>
+<div class="btn_back">
+    <a href="{% url 'myapp:data_list' %}">戻る</a>
+</div>
+{% endblock %}

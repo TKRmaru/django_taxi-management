@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+{% load humanize %}
+<html lang="ja">
+<head>
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+  <script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    {% block title %}TAXI_SYSTEM{% endblock %}
+  </title>
+</head>
+<body>
+<header>
+  <div class="wrapper">
+    <div id="data-input"><a href="{% url 'myapp:data_input' %}" target="_blank">運行記録入力</a></div>
+    <nav>
+      <button class="btn-menu">MENU</button>
+      <ul class="main-nav">
+        <li><a href = {% url 'myapp:home' %} id="home_btn">HOME</a></li>
+        <li><a href="{% url 'myapp:data_summary' %}">日別集計表</a></li>
+        <li><a href="{% url 'myapp:data_list' %}">記録一覧</a></li>
+        <li class="btn-list"><a href="{% url 'myapp:car_list' %}">搬送車リスト</a>
+          <a href="{% url 'myapp:car_create' %}" class="btn-create">▶ 新規登録</a></li>
+         <li class="btn-list"><a href="{% url 'myapp:customer_list' %}">顧客リスト</a>
+          <a href="{% url 'myapp:customer_create' %}" class="btn-create">▶ 新規登録</a></li>
+        <li class="btn-list"><a href="{% url 'myapp:place_list' %}">施設リスト</a>
+          <a href="{% url 'myapp:place_create' %}" class="btn-create">▶ 新規登録</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+<script src="{% static 'script.js' %}"></script>
+</body>
+</html>

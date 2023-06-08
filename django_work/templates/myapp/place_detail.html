@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>施設詳細ページ</h1>
+<table class="detail_table">
+    <tr>
+        <th>施設名</th>
+        <td>{{ object.place_name }}</td>
+    </tr>
+    <tr>
+        <th>住所</th>
+        <td>{% if object.zip_code %}〒{{ object.zip_code }}{% else %}{% endif %}<br>
+        {% if object.prefecture %}{{ object.prefecture }}{% else %}{% endif %}{% if object.city %}{{ object.city }}{% else %}{% endif %}
+        {% if object.bldg %}{{ object.bldg }}{% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>電話番号</th>
+        <td>{% if object.tel %}{{ object.tel }}{% else %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>備考</th>
+        <td>{% if object.remarks %}{{ object.remarks }}{% else %}{% endif %}</td>
+    </tr>
+</table>
+<div class="btn_group">
+    <a href="{% url 'myapp:place_update' object.id %}" class="btn">更新</a>
+    <a href="{% url 'myapp:place_delete' object.id %}" class="btn">削除</a>
+</div>
+<div class="btn_back">
+    <a href="{% url 'myapp:place_list' %}">戻る</a>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<h1>日別集計表</h1>
+<div class="content_top">
+    <div class="search_area">
+        <h2>検索条件</h2>
+        <form method="get">
+            {{ form.non_field_errors }}
+            <div class="search_field">
+                {{ form.year.errors }}
+                {{ form.year }}
+                <label for="{{ form.year.id_for_label }}">{{ form.year.label }}</label>
+                {{ form.month.errors }}
+                {{ form.month }}
+                <label for="{{ form.month.id_for_label }}">{{ form.month.label }}</label>
+            </div>
+            <div class="search_field">
+                {{ form.car.errors }}
+                <label for="{{ form.car.id_for_label }}">{{ form.car.label }}:</label>
+                {{ form.car }}
+            </div>
+            <div class="form_btn">
+                <input type="submit" value="検索">
+                <a href="{% url 'myapp:data_summary' %}" class="reset_btn">条件リセット</a>
+            </div>
+        </form>
+    </div>
+    <div class="summary_area">
+        <table border="1" style="border-collapse: collapse">
+            <tr>
+                <td></td>
+                <th>走行距離(km)</th>
+                <th>金額(円)</th>
+            </tr>
+            <tr>
+                <th>合計/月</th>
+                <th>{{ total_dis }}</th>
+                <th>{{ total_fare }}</th>
+            </tr>
+            <tr>
+                <th>平均/日</th>
+                <th>{{ av_dis|intcomma  }}</th>
+                <th>{{ av_fare|intcomma }}</th>
+            <tr>
+        </table>
+    </div>
+</div>
+<div class="result_area">
+    <h2>検索結果</h2>
+    <table border="1" style="border-collapse: collapse">
+        <tr class="table_header">
+            <th rowspan="2">No.</th>
+            <th rowspan="2">日時</th>
+            <th rowspan="2">搬送車</th>
+            <th colspan="3">乗車タイプ</th>
+            <th rowspan="2">走行距離(km)</th>
+            <th rowspan="2">金額(円)</th>
+            <th rowspan="2">STR</th>
+            <th rowspan="2">深割</th>
+            <th rowspan="2">平均金額(円)/回</th>
+        </tr>
+        <tr class="table_header">
+            <th>迎</th>
+            <th>賃</th>
+            <th>回</th>
+        </tr>
+        {% for datasummary in summary %}
+        <tr>
+            <td><span>{{ forloop.counter }}.</span></td>
+            <td>{{ datasummary.date|date:'Y/m/d' }}</td>
+            <td>{{ datasummary.car__car_number }}</td>
+            <td>{{ datasummary.count_ride_type_1 }}</td>
+            <td>{{ datasummary.count_ride_type_2 }}</td>
+            <td>{{ datasummary.count_ride_type_3 }}</td>
+            <td>{{ datasummary.daily_distance|intcomma }}</td>
+            <td>{{ datasummary.daily_fare|intcomma }}</td>
+            <td>{{ datasummary.count_at_stretcher }}</td>
+            <td>{{ datasummary.count_at_night }}</td>
+            <td>{{ datasummary.average_fare|intcomma }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="pagination">
+    <span>
+        {% if page_obj.has_previous %}
+            <span><a href="?{{ query_string }}&page={{ page_obj.previous_page_number }}">＜</a></span>
+        {% endif %}
+
+        {% for link_page in page_obj.paginator.page_range %}
+        {% if link_page == page_obj.number %}
+            <span class="page-link current" href="#">{{ link_page }}</span>
+        {% else %}
+           <span class="page-link" href="#"><a
+                   href="?{{ query_string }}&page={{ link_page }}">{{ link_page }}</a></span>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <span><a href="?{{ query_string }}&page={{ page_obj.next_page_number }}">＞</a></span>
+        {% endif %}
+    </span>
+</div>
+<div class="btn_csv">
+  <a href="{% url 'myapp:data_summary_csv_export' %}">csv出力</a>
+</div>
+
+{% endblock %}

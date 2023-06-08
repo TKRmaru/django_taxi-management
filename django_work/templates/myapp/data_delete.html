@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<form method="post">{% csrf_token %}
+<div class="result_area">
+    <table border="1" style="border-collapse: collapse">
+    <tr class="table_header">
+        <th>日付</th>
+        <th>搬送車</th>
+        <th>乗車タイプ</th>
+        <th>顧客名</th>
+        <th>出発地</th>
+        <th>到着地</th>
+        <th>出発時刻</th>
+        <th>到着時刻</th>
+        <th>運行前(km)</th>
+        <th>運行後(km)</th>
+        <th>走行距離(km)</th>
+        <th>金額(円)</th>
+        <th>STR</th>
+        <th>深割</th>
+    </tr>
+    <tr>
+        <td>{{ object.date|date:'Y/m/d' }}</td>
+        <td>{{ object.car }}</td>
+        <td>{{ object.ride_type }}</td>
+        <td>{% if object.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ object.customer_name }}</a>
+            {% else %}{% endif %}</td>
+        <td>{{ object.place_from }}</td>
+        <td>{{ object.place_to }}</td>
+        <td>{{ object.start_time }}</td>
+        <td>{{ object.arrival_time }}</td>
+        <td>{{ object.mileage_from|intcomma }}</td>
+        <td>{{ object.mileage_to|intcomma }}</td>
+        <td>{{ object.distance|intcomma }}</td>
+        <td>{% if object.fare %}{{ object.fare|intcomma }} 円
+            {% else %}{% endif %}</td>
+        <td>{% if object.at_stretcher %} ○
+            {% else %} ×
+            {% endif %}</td>
+        <td>{% if object.at_night %} ○
+            {% else %} ×
+            {% endif %}</td>
+    </tr>
+    </table>
+</div>
+    <br>
+    <p>を削除してもよろしいですか?</p>
+    <input type="submit" value="削除" class="btn_register">
+</form>
+<div class="btn_back">
+    <a href="{% url 'myapp:data_list' %}">戻る</a>
+</div>
+
+{% endblock %}

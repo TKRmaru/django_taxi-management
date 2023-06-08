@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">{% csrf_token %}
+    <p>"{{ object }}"<br>
+        を削除してもよろしいですか?</p><br>
+    <input type="submit" value="削除" class="btn_register">
+</form>
+
+{% endblock %}

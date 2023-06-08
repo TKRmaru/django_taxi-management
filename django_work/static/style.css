@@ -1,0 +1,380 @@
+/*
+COLORS
+================================================ */
+:root {
+    --light-blue: #4db1ec;
+    --blue: #1665cc;
+    --grey: #333;
+    --white: #fff;
+    --light-green: #ebf7f5;
+}
+/*
+GENERAL STYLING
+================================================ */
+*{
+    margin: 0;
+    padding: 0;
+}
+li{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+}
+html {
+    font-size: 95%;
+    scroll-behavior: smooth;
+}
+body {
+    font-family: sans-serif;
+}
+
+/*
+COMMON
+================================================ */
+.content{
+    width : 96%;
+    max-width: 1200px;
+    margin: 0 auto 150px auto;
+    padding: 0.5rem 0;
+    background: #fff;
+    top: 60px;
+    position: relative;
+}
+h1{
+    font-size:1.4rem;
+}
+h2{
+    font-size:1.2rem;
+}
+header a:hover {
+    color: var(--grey);
+    transition: .2s;
+}
+.content a:hover {
+    color: red;
+    transition: .2s;
+}
+.pagination a:hover{
+    background: #93d8d0;
+    color: #fff;
+}
+/*
+HEADER
+================================================ */
+header{
+    background: var(--blue);
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+    padding: 0.6rem 0;
+}
+.wrapper {
+    max-width: 1000px;
+    width: 96%;
+    padding: 0 1rem;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+}
+header a {
+    color: var(--white);
+    font-size: 1.3rem;
+    background: var(--blue);
+}
+#data-input {
+    border: 1px solid rgba(255,255,255,.5);
+    padding: 0 1rem;
+}
+.btn-menu {
+    position: absolute;
+    right: 25px;
+    border: 1px solid rgba(255,255,255,.5);
+    color: var(--white);
+    padding: .5rem 1rem;
+    background-color: transparent;
+    display: none;
+}
+.main-nav {
+    width: 100%;
+    position: static;
+    display: flex;
+    background: var(--blue);
+    z-index: 2;
+    transition: .5s;
+}
+.main-nav li {
+    text-align: center;
+    padding: 0 0.5rem;
+    margin: 0 0 0 2rem;
+}
+.main-nav.open-menu {
+    width: 25%;
+}
+.btn-list {
+    position: relative;
+  }
+.btn-create{
+    position: absolute;
+    display: none;
+    top: 100%;
+    left: 0;
+    padding: 0.8rem 1rem 0.2rem 0.5rem;
+    transition: all 0.2s ease-in-out;
+    font-size: 1.1rem;
+    text-align: left;
+}
+.btn-list:hover .btn-create {
+    display: block;
+    transition: all 0.2s ease-in-out;
+}
+/*
+CONTENTS
+================================================ */
+/* create&updateページ */
+.register_form{
+    margin: 1.2rem auto 0 auto;
+    width: 96%;
+    display: flex;
+    flex-direction: column;
+}
+.register_form label{
+    text-align: right;
+    width: 115px;
+    padding-right: 0.4rem;
+    display: inline-block;
+}
+.input_field, .split_area, .register_form p{
+    display:flex;
+    align-items: center;
+}
+.register_form div input, .register_form div select, .register_form div textarea,
+.register_form p input, .register_form p select, .register_form p textarea{
+    margin: 0.4rem 0 0.4rem 0;
+    height: 1.8rem;
+}
+.input-group{
+    display:flex;
+    flex-direction:row;
+}
+.input-group-addon{
+    padding:10px 0 0 3px;
+}
+.register_form p input{
+    width: 200px;
+}
+.register_form p select{
+    width: 60px;
+}
+#id_mileage_from, #id_mileage_to, #id_fare{
+    width: 70px;
+}
+.checkbox input{
+    width: 20px;
+}
+#id_remarks{
+    height: 6rem;
+}
+.btn_register_btm{
+    border: 1px solid var(--grey);
+    border-radius: 20px;
+    font-weight: bold;
+    width: 90px;
+    margin: 2rem 0 0 7rem;
+    padding: 0.3rem;
+}
+/* カレンダー */
+.datepicker-days th.dow:first-child,
+.datepicker-days td:first-child {
+    color: #f00;
+}
+.datepicker-days th.dow:last-child,
+.datepicker-days td:last-child {
+    color: #00f;
+}
+/* 検索リスト */
+h2::before{
+    content: '';
+    width: 6px;
+    height: 1.2rem;
+    background: var(--grey);
+    display: inline-block;
+    margin: 0 6px -2px 0;
+}
+.btn_register{
+    border: 1px solid var(--grey);
+    border-radius: 15px;
+    width: 70px;
+    text-align: center;
+    padding: 0 1rem;
+    display: block;
+    margin: 0.5rem 0 1rem 0;
+}
+.content_top{
+    display:flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+.search_area form{
+    margin-bottom: 2rem;
+    border: 1px solid black;
+    padding: 0.8rem;
+}
+.db_search_form{
+    width: 300px;
+}
+.search_field{
+    height: 1.7rem;
+}
+.search_field input, .search_field select{
+    height: 1.3rem;
+}
+.address_search{
+    display: flex;
+    width: 22%;
+    min-width: 265px;
+    justify-content: space-between;
+}
+.search_field input[type="number"] {
+    width: 80px;
+}
+.form_btn {
+    margin-top: 0.3rem;
+    display: flex;
+    width: 220px;
+    justify-content: space-between;
+}
+.form_btn input{
+    padding:0 2rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.reset_btn{
+    font-size: 0.8rem;
+    font: #fff;
+    border: solid 1px black;
+    text-align: center;
+    border-radius: 3px;
+    padding: 0.1rem;
+    float: right;
+}
+.summary_area{
+    margin:0 0 2rem 3rem;
+}
+.summary_area table{
+    text-align: center;
+    width:300px;
+    background-color: #dedad7;
+}
+.result_area table {
+    width: 100%;
+    max-width : 1200px;
+}
+.result_area table tr{
+    height:2rem;
+}
+.table_header{
+    background: var(--light-blue);
+}
+.result_area tr:nth-child(2n+3){
+    background: var(--light-green);
+}
+
+.result_area table tr th, .result_area table tr td{
+    text-align: center;
+}
+.result_area .text_left{
+    text-align: left;
+}
+.tab a{
+    padding: 0.2rem;
+}
+.btn_csv{
+    display:flex;
+    flex-direction:row;
+    max-width: 1200px;
+    justify-content: flex-end;
+}
+.btn_csv a{
+    border: 1px solid var(--grey);
+    border-radius: 15px;
+    text-align: center;
+    padding: 0 1rem;
+    margin: 1rem 0.5rem;
+}
+.csv_upload li{
+    display:flex;
+    flex-direction: column;
+}
+/* ページネーション */
+.pagination{
+    margin-top:10px;
+}
+.pagination span{
+    display: flex;
+    text-align: center;
+}
+.current, .pagination span a{
+    border-radius: 50%;
+    margin: 0 6px;
+    width: 32px;
+    height: 26px;
+    padding-top: 4px;
+}
+.current{
+    background: #ccc;
+    color: #fff;
+    justify-content: center;
+}
+
+
+/* 詳細ページ */
+.detail_table{
+    margin: 1.5rem 0 ;
+}
+.detail_table tr{
+    height: 2.1rem;
+}
+.detail_table th{
+    min-width: 120px;
+}
+.btn_group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 155px;
+}
+.btn_group a{
+    border: 1px solid black;
+    border-radius: 2px;
+    padding: 0 0.8rem;
+}
+.btn_back{
+    width: 95px;
+    text-align: center;
+    margin-top: 2rem;
+    text-decoration:underline;
+}
+
+/*
+TABLET SIZE
+================================================ */
+@media (max-width: 1034px) {
+/* Header */
+    .btn-menu {
+        display: initial;
+    }
+    .main-nav {
+        width: 0;
+        position: absolute;
+        top: 42px;
+        right: 0;
+        flex-direction: column;
+    }
+    .main-nav li {
+        margin: 1rem 0;
+    }
+    .btn-list:hover .btn-create {
+        display: none;
+    }
+}

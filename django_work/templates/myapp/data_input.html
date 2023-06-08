@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load bootstrap4 %}
+<h1>運行記録入力ページ</h1>
+<form method="post" enctype="multipart/form-data" class="h-adr register_form">{% csrf_token %}
+    {% bootstrap_javascript jquery='full' %}
+    {{ form.media }}
+
+    <div class="input_field">
+        <label for="{{ form.date.id_for_label }}">{{ form.date.label }}:</label>
+        {{ form.date }}
+    </div>
+    <div class="split_area">
+        <div class="input_field">
+            <label for="{{ form.car.id_for_label }}">{{ form.car.label }}:</label>
+            {{ form.car }}{{ form.car.field.choices|safe }}
+        </div>
+        <div class="input_field">
+            <label for="{{ form.ride_type.id_for_label }}">{{ form.ride_type.label }}:</label>
+            {{ form.ride_type }}
+        </div>
+    </div>
+    <div class="input_field" id="customer_name_wrapper" style="display: none;">
+        <label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}:</label>
+        {{ form.customer_name }}
+    </div>
+    <div class="split_area">
+        <div class="input_field">
+            <label for="{{ form.place_from.id_for_label }}">{{ form.place_from.label }}:</label>
+            {{ form.place_from }}
+        </div>
+        <div class="input_field">
+            <label for="{{ form.place_to.id_for_label }}">{{ form.place_to.label }}:</label>
+            {{ form.place_to }}
+        </div>
+    </div>
+    <div class="split_area">
+        <div class="input_field">
+            <label for="{{ form.start_time.id_for_label }}">{{ form.start_time.label }}:</label>
+            {{ form.start_time }}
+        </div>
+        <div class="input_field">
+            <label for="{{ form.arrival_time.id_for_label }}">{{ form.arrival_time.label }}:</label>
+            {{ form.arrival_time }}
+        </div>
+    </div>
+    <div class="split_area">
+        <div class="input_field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------------</div>
+        <div class="input_field">
+            <label for="{{ form.mileage_to.id_for_label }}">{{ form.mileage_to.label }}:</label>
+            {{ form.mileage_to }}
+        </div>
+    </div>
+    <div class="input_field" id="fare_wrapper" style="display: none;">
+        <label for="{{ form.fare.id_for_label }}">{{ form.fare.label }}:</label>
+        {{ form.fare }}
+    </div>
+    <div class="split_area" id="checkbox_wrapper" style="display: none;">
+        <div class="checkbox input_field">
+            <label for="{{ form.at_stretcher.id_for_label }}">{{ form.at_stretcher.label }}:</label>
+            {{ form.at_stretcher }}
+        </div>
+        <div class="checkbox input_field">
+            <label for="{{ form.at_night.id_for_label }}">{{ form.at_night.label }}:</label>
+            {{ form.at_night }}
+        </div>
+    </div>
+    <div class="input_field">
+        <label for="{{ form.remarks.id_for_label }}">{{ form.remarks.label }}:</label>
+        {{ form.remarks }}
+    </div>
+
+    <input type="submit" value="登録" class="btn_register_btm">
+</form>
+{{ initial_mileage }}
+<div class="btn_back">
+    <a href="{% url 'myapp:data_list' %}">売上一覧</a>
+</div>
+{% endblock %}

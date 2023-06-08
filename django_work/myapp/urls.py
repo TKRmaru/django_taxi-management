@@ -1,0 +1,36 @@
+from django.urls import path
+from . import views
+
+app_name = 'myapp'
+urlpatterns = [
+    path('home/', views.Home.as_view(), name='home'),
+    path('car_create/', views.CarCreateView.as_view(), name='car_create'),
+    path('car_list/', views.CarListView.as_view(), name='car_list'),
+    path('car_update/<int:pk>', views.CarUpdateView.as_view(), name='car_update'),
+    path('car_delete/<int:pk>', views.CarDeleteView.as_view(), name='car_delete'),
+    path('customer_create/', views.CustomerCreateView.as_view(), name='customer_create'),
+    path('customer_list/', views.CustomerListView.as_view(), name='customer_list'),
+    path('customer_detail/<int:pk>', views.CustomerDetailView.as_view(), name='customer_detail'),
+    path('customer_update/<int:pk>', views.CustomerUpdateView.as_view(), name='customer_update'),
+    path('customer_delete/<int:pk>', views.CustomerDeleteView.as_view(), name='customer_delete'),
+    path('place_create/', views.PlaceCreateView.as_view(), name='place_create'),
+    path('place_list/', views.PlaceListView.as_view(), name='place_list'),
+    path('place_detail/<int:pk>', views.PlaceDetailView.as_view(), name='place_detail'),
+    path('place_update/<int:pk>', views.PlaceUpdateView.as_view(), name='place_update'),
+    path('place_delete/<int:pk>', views.PlaceDeleteView.as_view(), name='place_delete'),
+    path('data_input/', views.DataInputView.as_view(), name='data_input'),
+    path('data_list/', views.DataListView.as_view(), name='data_list'),
+    path('data_summary/', views.DataSummaryView.as_view(), name='data_summary'),
+    path('data_detail/<int:pk>', views.DataDetailView.as_view(), name='data_detail'),
+    path('data_update/<int:pk>', views.DataUpdateView.as_view(), name='data_update'),
+    path('data_delete/<int:pk>', views.DataDeleteView.as_view(), name='data_delete'),
+    path('car/csv_export/', views.CarCSVExportView.as_view(), name='car_csv_export'),
+    path('car/csv_import/', views.CarCSVImportView.as_view(), name='car_csv_import'),
+    path('customer/csv_export/', views.CustomerCSVExportView.as_view(), name='customer_csv_export'),
+    path('customer/csv_import/', views.CustomerCSVImportView.as_view(), name='customer_csv_import'),
+    path('place/csv_export/', views.PlaceCSVExportView.as_view(), name='place_csv_export'),
+    path('place/csv_import/', views.PlaceCSVImportView.as_view(), name='place_csv_import'),
+    path('data_list/csv_export/', views.DataListCSVExportView.as_view(), name='data_list_csv_export'),
+    path('data_list/csv_import/', views.DataCSVImportView.as_view(), name='data_list_csv_import'),
+    path('data_summary/csv_export/', views.DataSummaryCSVExportView.as_view(), name='data_summary_csv_export'),
+]

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>顧客リスト作成ページ</h1>
+<form method="post" enctype="multipart/form-data" class="h-adr register_form">{% csrf_token %}
+    <span class="p-country-name" style="display:none;">Japan</span>
+    {{ form.as_p }}
+    <input type="submit" value="登録" class="btn_register_btm">
+</form>
+<div class="btn_back">
+    <a href="{% url 'myapp:customer_list' %}">顧客リスト</a>
+</div>
+{% endblock %}

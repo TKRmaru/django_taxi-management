@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>搬送車情報更新ページ</h1>
+<form method="post" enctype="multipart/form-data" class="h-adr register_form">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" id="save" value="更新" class="btn_register_btm">
+</form>
+<div class="btn_back">
+    <a href="{% url 'myapp:car_list' %}">戻る</a>
+</div>
+{% endblock %}
