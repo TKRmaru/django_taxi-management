@@ -2,4 +2,31 @@
 
 {% block content %}
 <h1>福祉タクシー<br>運行記録管理システム</h1>
+<div class="wrapper home_list">
+    <div class="home_data-input">
+        <a href="{% url 'myapp:data_input' %}" target="_blank">運行記録入力</a>
+    </div>
+    <div class="home_check">
+        <h2>運行記録を見る</h2>
+        <ul>
+            <li><a href="{% url 'myapp:data_summary' %}">日別集計表</a></li>
+            <li><a href="{% url 'myapp:data_list' %}">記録一覧</a></li>
+        </ul>
+    </div>
+    <div class="home_register">
+        <h2>登録・確認する</h2>
+        <ul>
+            <li><a href="{% url 'myapp:car_list' %}">搬送車リスト</a></li>
+            <li><a href="{% url 'myapp:customer_list' %}">顧客リスト</a></li>
+            <li><a href="{% url 'myapp:place_list' %}">施設リスト</a></li>
+        </ul>
+    </div>
+    <div class="home_admin">
+        <ul>
+            <li><a href="{% url 'accounts:logout' %}">ログアウト</a></li>
+            <li><a href="{% url 'admin:index' %}" target="_blank">管理者ページへ</a></li>
+        </ul>
+    </div>
+</div>
+
 {% endblock %}

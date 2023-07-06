@@ -3,12 +3,16 @@ from .models import CarInformation, CustomerInformation, PlaceInformation, Sales
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django.forms.widgets import SelectDateWidget
 from datetime import date, datetime
-
+from django.contrib.auth.models import User
 
 class CarCreateForm(forms.ModelForm):
     class Meta:
         model = CarInformation
         fields = ('car_number', 'car_type', 'car_mileage', 'remarks')
+        widgets = {
+            'car_number': forms.TextInput(
+                attrs={'placeholder': '例：1111', }, ),
+        }
 
 
 class CarSearchForm(forms.Form):
@@ -98,22 +102,19 @@ class DataInputForm(forms.ModelForm):
         label="到着時刻",
         widget=forms.TimeInput(attrs={"type": "time"})
     )
-    mileage_to = forms.IntegerField(
-        label="メーター(後)",
+    mileage_from = forms.IntegerField(
+        label="MTR(前)",
         initial=0,  # 初期値を設定
     )
-
-    def __init__(self, *args, **kwargs):  # car, mileage_toの初期値をcar(id=1)に設定
-        super().__init__(*args, **kwargs)
-        self.initial['car'] = CarInformation.objects.get(id=1)
-        car_information = self.initial.get('car')
-        if car_information:
-            self.fields['mileage_to'].initial = car_information.car_mileage
+    mileage_to = forms.IntegerField(
+        label="MTR(後)",
+        initial=0,  # 初期値を設定
+    )
 
     class Meta:
         model = SalesRecord
         fields = ('date', 'car', 'ride_type', 'customer_name', 'place_from', 'place_to', 'start_time', 'arrival_time',
-                  'mileage_to', 'fare', 'at_stretcher', 'at_night', 'remarks')
+                  'mileage_from', 'mileage_to', 'fare', 'at_stretcher', 'at_night', 'remarks')
 
 
 class DataUpdateForm(DataInputForm):
@@ -158,6 +159,9 @@ class DataSearchForm(forms.Form):
     distance_end = forms.IntegerField(label='走行距離上限', min_value=0, required=False)
     at_night = forms.CharField(label='深夜割増', required=False, widget=forms.Select(
         choices=[('', '--------'), ('True', 'あり'), ('False', 'なし')]))
+    added_by = forms.ModelChoiceField(queryset=User.objects, label='登録者', required=False)
+    revised_by = forms.ModelChoiceField(queryset=User.objects, label='更新者', required=False)
+
 
 
 class DataSummaryForm(forms.Form):

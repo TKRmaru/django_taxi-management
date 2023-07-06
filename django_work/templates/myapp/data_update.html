@@ -3,10 +3,8 @@
 {% load bootstrap4 %}
 <h1>運行記録更新ページ</h1>
 <form method="post" enctype="multipart/form-data" class="h-adr register_form">{% csrf_token %}
-<!--    {% bootstrap_css %}-->
     {% bootstrap_javascript jquery='full' %}
     {{ form.media }}
-<!--    {{ form.as_p }}-->
         <div class="input_field">
         <label for="{{ form.date.id_for_label }}">{{ form.date.label }}:</label>
         {{ form.date }}

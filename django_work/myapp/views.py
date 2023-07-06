@@ -9,6 +9,13 @@ from django.utils import timezone
 import csv, codecs
 from django.http import HttpResponse
 from django.db.models.functions import Cast
+from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+import re
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 
 class Home(TemplateView):
@@ -115,13 +122,13 @@ class CarCSVExportView(View):
         writer.writerow(
             ['ID', 'ナンバー', '車種', '総走行距離', '備考'])
 
-        for object in carinformation:
+        for car in carinformation:
             writer.writerow([
-                object.id,
-                object.car_number,
-                object.car_type,
-                object.car_mileage,
-                object.remarks,
+                car.id,
+                car.car_number,
+                car.car_type,
+                car.car_mileage,
+                car.remarks,
             ])
         return response
 
@@ -151,7 +158,7 @@ class CustomerListView(ListView):
     form_class = CustomerSearchForm
     template_name = 'myapp/customer_list.html'
     context_object_name = "customer_list"
-    paginate_by = 10
+    paginate_by = 20
 
     def get(self, request, *args, **kwargs):  # 検索条件をセッションに保存
         q_customer_name = self.request.GET.get('customer_name')
@@ -222,17 +229,17 @@ class CustomerCSVExportView(View):
         writer.writerow(
             ['ID', '名前', '生年月日', '郵便番号', '都道府県', '市区町村番地', '建物名', '電話番号', '備考'])
 
-        for object in customerinformation:
+        for customer in customerinformation:
             writer.writerow([
-                object.id,
-                object.customer_name,
-                object.birthday.strftime('%Y-%m-%d') if object.birthday else '',
-                object.zip_code,
-                object.prefecture,
-                object.city,
-                object.bldg,
-                object.tel,
-                object.remarks,
+                customer.id,
+                customer.customer_name,
+                customer.birthday.strftime('%Y-%m-%d') if customer.birthday else '',
+                customer.zip_code,
+                customer.prefecture,
+                customer.city,
+                customer.bldg,
+                customer.tel,
+                customer.remarks,
             ])
         return response
 
@@ -345,16 +352,16 @@ class PlaceCSVExportView(View):
         writer.writerow(
             ['ID', '施設名', '郵便番号', '都道府県', '市区町村番地', '建物名', '電話番号', '備考'])
 
-        for object in placeinformation:
+        for place in placeinformation:
             writer.writerow([
-                object.id,
-                object.place_name,
-                object.zip_code,
-                object.prefecture,
-                object.city,
-                object.bldg,
-                object.tel,
-                object.remarks,
+                place.id,
+                place.place_name,
+                place.zip_code,
+                place.prefecture,
+                place.city,
+                place.bldg,
+                place.tel,
+                place.remarks,
             ])
         return response
 
@@ -378,11 +385,37 @@ class PlaceDeleteView(DeleteView):
     success_url = '/myapp/place_list'
 
 
-class DataInputView(CreateView):
+class DataInputView(LoginRequiredMixin, CreateView):
     model = SalesRecord
     form_class = DataInputForm
     template_name = 'myapp/data_input.html'
     success_url = '/myapp/data_input'
+
+    def form_valid(self, form):
+        # フォームのバリデーションに成功した場合の処理
+        user = self.request.user  # ログインユーザーを取得
+        sales_record = form.save(commit=False)  # SalesRecord オブジェクトを作成
+        sales_record.added_by = user  # ユーザー情報を設定
+        sales_record.save()  # オブジェクトを保存
+
+        return super().form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except ObjectDoesNotExist:
+            error_message1 = '基本データが見つかりませんでした。'
+            error_message2 = '搬送車または施設情報を登録してください。'
+            return render(request, 'myapp/error_template.html', {'error_message1': error_message1, 'error_message2': error_message2})
+
+
+def get_car_mileage(request, car_id):
+    try:
+        car = CarInformation.objects.get(id=car_id)
+        car_mileage = car.car_mileage
+        return JsonResponse({'car_mileage': car_mileage})
+    except CarInformation.DoesNotExist:
+        return JsonResponse({'error': 'Car not found'}, status=404)
 
 
 class DataListView(ListView):
@@ -408,6 +441,8 @@ class DataListView(ListView):
         q_distance_end = self.request.GET.get('distance_end')
         q_at_stretcher = self.request.GET.get('at_stretcher')
         q_at_night = self.request.GET.get('at_night')
+        q_added_by = self.request.GET.get('added_by')
+        q_revised_by = self.request.GET.get('revised_by')
 
         request.session['q_date_begin_year'] = q_date_begin_year
         request.session['q_date_begin_month'] = q_date_begin_month
@@ -424,6 +459,8 @@ class DataListView(ListView):
         request.session['q_distance_end'] = q_distance_end
         request.session['q_at_stretcher'] = q_at_stretcher
         request.session['q_at_night'] = q_at_night
+        request.session['q_added_by'] = q_added_by
+        request.session['q_revised_by'] = q_revised_by
 
         return super().get(request, *args, **kwargs)
 
@@ -455,6 +492,9 @@ class DataListView(ListView):
         q_distance_end = self.request.GET.get('distance_end')
         q_at_stretcher = self.request.GET.get('at_stretcher')
         q_at_night = self.request.GET.get('at_night')
+        q_added_by = self.request.GET.get('added_by')
+        q_revised_by = self.request.GET.get('revised_by')
+
 
         context['form'] = DataSearchForm(initial={
             'date_begin_year': q_date_begin_year, 'date_begin_month': q_date_begin_month,
@@ -463,7 +503,7 @@ class DataListView(ListView):
             'car': q_car, 'ride_type': q_ride_type, 'customer_name': q_customer_name, 'place_from': q_place_from,
             'place_to': q_place_to,
             'distance_begin': q_distance_begin, 'distance_end': q_distance_end, 'at_stretcher': q_at_stretcher,
-            'at_night': q_at_night})
+            'at_night': q_at_night, 'added_by': q_added_by, 'revised_by': q_revised_by})
         return context
 
     def get_queryset(self):
@@ -482,6 +522,8 @@ class DataListView(ListView):
         q_distance_end = self.request.GET.get('distance_end')
         q_at_stretcher = self.request.GET.get('at_stretcher')
         q_at_night = self.request.GET.get('at_night')
+        q_added_by = self.request.GET.get('added_by')
+        q_revised_by = self.request.GET.get('revised_by')
 
         salesrecord = SalesRecord.objects.all()
 
@@ -536,6 +578,10 @@ class DataListView(ListView):
                 salesrecord = salesrecord.filter(at_night=True)
             elif q_at_night == 'False':
                 salesrecord = salesrecord.filter(at_night=False)
+        if q_added_by:
+            salesrecord = salesrecord.filter(added_by=q_added_by)
+        if q_revised_by:
+            salesrecord = salesrecord.filter(revised_by=q_revised_by)
         return salesrecord.order_by("-date", "car", "-mileage_to")
 
 
@@ -556,6 +602,8 @@ class DataListCSVExportView(View):
         q_distance_end = request.session.get('q_distance_end')
         q_at_stretcher = request.session.get('q_at_stretcher')
         q_at_night = request.session.get('q_at_night')
+        q_added_by = request.session.get('added_by')
+        q_revised_by = request.session.get('revised_by')
 
         salesrecord = SalesRecord.objects.all()
 
@@ -610,6 +658,10 @@ class DataListCSVExportView(View):
                 salesrecord = salesrecord.filter(at_night=True)
             elif q_at_night == 'False':
                 salesrecord = salesrecord.filter(at_night=False)
+        if q_added_by:
+            salesrecord = salesrecord.filter(added_by=q_added_by)
+        if q_revised_by:
+            salesrecord = salesrecord.filter(revised_by=q_revised_by)
         # セッションの検索条件を削除
         del request.session['q_date_begin_year']
         del request.session['q_date_begin_month']
@@ -626,34 +678,39 @@ class DataListCSVExportView(View):
         del request.session['q_distance_end']
         del request.session['q_at_stretcher']
         del request.session['q_at_night']
+        del request.session['q_added_by']
+        del request.session['q_revised_by']
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="data_list.csv"'
         response.write(codecs.BOM_UTF8)
         writer = csv.writer(response)
         writer.writerow(
-            ['日付', '搬送車', '乗車タイプ', '顧客名', '出発地', '到着地', '出発時刻', '到着時刻', '運行前(km)',
-             '運行後(km)', '走行距離(km)', '金額(円)', 'STR', '深夜割増'])
+            ['ID', '日付', '搬送車', '乗車タイプ', '顧客名', '出発地', '到着地', '出発時刻', '到着時刻', '運行前(km)',
+             '運行後(km)', '走行距離(km)', '金額(円)', 'STR', '深夜割増', '備考', '登録者', '更新者'])
 
-        for object in salesrecord:
-            object.at_stretcher = '〇' if object.at_stretcher else '×'
-            object.at_night = '〇' if object.at_stretcher else '×'
+        for record in salesrecord:
+            record.at_stretcher = '〇' if record.at_stretcher else '×'
+            record.at_night = '〇' if record.at_night else '×'
             writer.writerow([
-                object.date,
-                int(object.car.car_number),
-                object.ride_type,
-                object.customer_name,
-                object.place_from,
-                object.place_to,
-                object.start_time.strftime('%H:%M'),
-                object.arrival_time.strftime('%H:%M'),
-                object.mileage_from,
-                object.mileage_to,
-                object.distance,
-                object.fare,
-                object.at_stretcher,
-                object.at_night,
-                object.remarks,
+                record.id,
+                record.date,
+                int(record.car.car_number),
+                record.ride_type,
+                record.customer_name,
+                record.place_from,
+                record.place_to,
+                record.start_time.strftime('%H:%M'),
+                record.arrival_time.strftime('%H:%M'),
+                record.mileage_from,
+                record.mileage_to,
+                record.distance,
+                record.fare,
+                record.at_stretcher,
+                record.at_night,
+                record.remarks,
+                record.added_by,
+                record.revised_by,
             ])
         return response
 
@@ -770,18 +827,18 @@ class DataSummaryCSVExportView(View):
             average_fare=Cast(Avg('fare'), IntegerField())
         ).order_by('date', 'car__car_number')
 
-        for object in summary:
+        for data in summary:
             writer.writerow([
-                object['date'],
-                int(object['car__car_number']),
-                object['count_ride_type_1'],
-                object['count_ride_type_2'],
-                object['count_ride_type_3'],
-                object['daily_distance'],
-                object['daily_fare'],
-                object['count_at_stretcher'],
-                object['count_at_night'],
-                object['average_fare'],
+                data['date'],
+                int(data['car__car_number']),
+                data['count_ride_type_1'],
+                data['count_ride_type_2'],
+                data['count_ride_type_3'],
+                data['daily_distance'],
+                data['daily_fare'],
+                data['count_at_stretcher'],
+                data['count_at_night'],
+                data['average_fare'],
             ])
         return response
 
@@ -798,6 +855,13 @@ class DataUpdateView(UpdateView):
     template_name = 'myapp/data_update.html'
     success_url = '/myapp/data_list'
 
+    def form_valid(self, form):
+        user = self.request.user
+        sales_record = form.save(commit=False)
+        sales_record.revised_by = user
+        sales_record.save()
+
+        return super().form_valid(form)
 
 class DataDeleteView(DeleteView):
     model = SalesRecord
@@ -815,24 +879,48 @@ class CarCSVImportView(FormView):
         decoded_file = csvfile.read().decode('utf-8').splitlines()
         reader = csv.reader(decoded_file)
         next(reader)
+
+        rows_processed = 0
         for row in reader:
-            if not any(row):
-                continue
+            rows_processed += 1
             instance = CarInformation()
-            instance.car_number = row[1]
-            instance.car_type = row[2]
-            instance.car_mileage = row[3]
-            instance.remarks = row[4]
+            try:
+                if not row[1]:
+                    form.add_error(None, "ナンバーが入力されていません")
+                else:
+                    instance.car_number = row[1]
+                    if not re.match(r'^\d{1,4}$', instance.car_number):
+                        form.add_error(None, f"ナンバーの形式が正しくありません： {instance.car_number}")
 
-            existing_car = CarInformation.objects.filter(car_number=instance.car_number).first()
+                instance.car_type = row[2]
 
-            if existing_car:
-                existing_car.car_type = instance.car_type
-                existing_car.car_mileage = instance.car_mileage
-                existing_car.remarks = instance.remarks
-                existing_car.save()
-            else:
-                instance.save()
+                if not row[3]:  # 空欄の場合はエラーメッセージを追加
+                    form.add_error(None, "総走行距離の入力が必要です")
+                else:
+                    try:
+                        instance.car_mileage = float(row[3])
+                    except ValueError:
+                        form.add_error(None, f"総走行距離の形式が正しくありません： {row[3]}")
+                instance.remarks = row[4]
+
+                if not form.errors:
+                    existing_car = CarInformation.objects.filter(car_number=instance.car_number).first()
+                    if existing_car:
+                        existing_car.car_type = instance.car_type
+                        existing_car.car_mileage = instance.car_mileage
+                        existing_car.remarks = instance.remarks
+                        existing_car.save()
+                    else:
+                        instance.save()
+            except IndexError:
+                form = self.get_form()  # 新しいフォームインスタンスを作成
+                form.add_error(None, "ファイルのフォーマットが正しくありません")
+
+        if rows_processed < 1:
+            form.add_error(None, "ファイルにデータがありません")
+
+        if form.errors:
+            return self.form_invalid(form)
 
         return super().form_valid(form)
 
@@ -847,36 +935,58 @@ class CustomerCSVImportView(FormView):
         decoded_file = csvfile.read().decode('utf-8').splitlines()
         reader = csv.reader(decoded_file)
         next(reader)
-        for row in reader:
-            instance = CustomerInformation()
-            instance.customer_name = row[1]
-            instance.birthday = None  # 初期化
-            if row[2]:
-                try:
-                    instance.birthday = datetime.strptime(row[2], '%Y/%m/%d').date()
-                except ValueError:
-                    continue
-            instance.zip_code = row[3]
-            instance.prefecture = row[4]
-            instance.city = row[5]
-            instance.bldg = row[6]
-            instance.tel = row[7]
-            instance.remarks = row[8]
-            existing_customer = CustomerInformation.objects.filter(
-                customer_name=instance.customer_name,
-                tel=instance.tel
-            ).first()
 
-            if existing_customer:
-                existing_customer.birthday = instance.birthday
-                existing_customer.zip_code = instance.zip_code
-                existing_customer.prefecture = instance.prefecture
-                existing_customer.city = instance.city
-                existing_customer.bldg = instance.bldg
-                existing_customer.remarks = instance.remarks
-                existing_customer.save()
-            else:
-                instance.save()
+        rows_processed = 0
+        for row in reader:
+            rows_processed += 1
+            instance = CustomerInformation()
+            try:
+                if not row[1]:
+                    form.add_error(None, "名前が入力されていません")
+                else:
+                    instance.customer_name = row[1]
+                if row[2]:
+                    try:
+                        instance.birthday = datetime.strptime(row[2], '%Y/%m/%d').date()
+                    except ValueError:
+                        form.add_error(None, f"生年月日の形式が正しくありません： {row[2]}")
+                instance.zip_code = row[3]
+                if instance.zip_code:  # 郵便番号が入力されている場合は形式チェック
+                    if not re.match(r'^\d{3}-?\d{4}$', instance.zip_code):
+                        form.add_error(None, f"郵便番号の形式が正しくありません： {instance.zip_code}")
+                instance.prefecture = row[4]
+                instance.city = row[5]
+                instance.bldg = row[6]
+                instance.tel = row[7]
+                if instance.tel:  # 電話番号が入力されている場合は形式チェック
+                    if not re.match(r'^\d{2,4}-\d{2,4}-\d{4}$', instance.tel):
+                        form.add_error(None, f"電話番号の形式が正しくありません： {instance.tel}")
+                instance.remarks = row[8]
+
+                if not form.errors:
+                    existing_customer = CustomerInformation.objects.filter(customer_name=instance.customer_name).first()
+                    if existing_customer:
+                        existing_customer.birthday = instance.birthday
+                        existing_customer.zip_code = instance.zip_code
+                        existing_customer.prefecture = instance.prefecture
+                        existing_customer.city = instance.city
+                        existing_customer.bldg = instance.bldg
+                        existing_customer.tel = instance.tel
+                        existing_customer.remarks = instance.remarks
+                        existing_customer.save()
+                    else:
+                        instance.save()
+            except IndexError:
+                form = self.get_form()  # 新しいフォームインスタンスを作成
+                form.add_error(None, "ファイルのフォーマットが正しくありません")
+
+        if rows_processed < 1:
+            form.add_error(None, "ファイルにデータがありません")
+
+        if form.errors:
+            return self.form_invalid(form)
+
+
 
         return super().form_valid(form)
 
@@ -891,30 +1001,50 @@ class PlaceCSVImportView(FormView):
         decoded_file = csvfile.read().decode('utf-8').splitlines()
         reader = csv.reader(decoded_file)
         next(reader)
+
+        rows_processed = 0
         for row in reader:
-            if not any(row):
-                continue
+            rows_processed += 1
             instance = PlaceInformation()
-            instance.place_name = row[1]
-            instance.zip_code = row[2]
-            instance.prefecture = row[3]
-            instance.city = row[4]
-            instance.bldg = row[5]
-            instance.tel = row[6]
-            instance.remarks = row[7]
+            try:
+                if not row[1]:
+                    form.add_error(None, "施設名が入力されていません")
+                else:
+                    instance.place_name = row[1]
+                instance.zip_code = row[2]
+                if instance.zip_code:  # 郵便番号が入力されている場合は形式チェック
+                    if not re.match(r'^\d{3}-?\d{4}$', instance.zip_code):
+                        form.add_error(None, f"郵便番号の形式が正しくありません： {instance.zip_code}")
+                instance.prefecture = row[3]
+                instance.city = row[4]
+                instance.bldg = row[5]
+                instance.tel = row[6]
+                if instance.tel:  # 電話番号が入力されている場合は形式チェック
+                    if not re.match(r'^\d{2,4}-\d{2,4}-\d{4}$', instance.tel):
+                        form.add_error(None, f"電話番号の形式が正しくありません： {instance.tel}")
+                instance.remarks = row[7]
 
-            existing_place = PlaceInformation.objects.filter(place_name=instance.place_name).first()
+                if not form.errors:
+                    existing_place = PlaceInformation.objects.filter(place_name=instance.place_name).first()
+                    if existing_place:
+                        existing_place.zip_code = instance.zip_code
+                        existing_place.prefecture = instance.prefecture
+                        existing_place.city = instance.city
+                        existing_place.bldg = instance.bldg
+                        existing_place.tel = instance.tel
+                        existing_place.remarks = instance.remarks
+                        existing_place.save()
+                    else:
+                        instance.save()
+            except IndexError:
+                form = self.get_form()  # 新しいフォームインスタンスを作成
+                form.add_error(None, "ファイルのフォーマットが正しくありません")
 
-            if existing_place:
-                existing_place.zip_code = instance.zip_code
-                existing_place.prefecture = instance.prefecture
-                existing_place.city = instance.city
-                existing_place.bldg = instance.bldg
-                existing_place.tel = instance.tel
-                existing_place.remarks = instance.remarks
-                existing_place.save()
-            else:
-                instance.save()
+        if rows_processed < 1:
+            form.add_error(None, "ファイルにデータがありません")
+
+        if form.errors:
+            return self.form_invalid(form)
 
         return super().form_valid(form)
 
@@ -929,56 +1059,161 @@ class DataCSVImportView(FormView):
         decoded_file = csvfile.read().decode('utf-8').splitlines()
         reader = csv.reader(decoded_file)
         next(reader)
+
+        rows_processed = 0
         for row in reader:
-            if not any(row):
-                continue
+            rows_processed += 1
             instance = SalesRecord()
-            if instance.date:
+            try:
+                if not row[1]:
+                    form.add_error(None, "日付が指定されていません")
+                else:
+                    try:
+                        instance.date = datetime.strptime(row[1], '%Y/%m/%d').date()
+                    except ValueError:
+                        form.add_error(None, f"日付の形式が正しくありません： {row[1]}")
+
+                if not row[2]:
+                    form.add_error(None, "搬送車が指定されていません")
+                else:
+                    try:
+                        instance.car = CarInformation.objects.get(car_number=row[2])
+                    except ObjectDoesNotExist:
+                        form.add_error(None, f"搬送車データが存在しません： {row[2]}")
+
+                if not row[3]:
+                    form.add_error(None, "乗車タイプが指定されていません")
+                else:
+                    try:
+                        instance.ride_type = row[3]
+                    except ValueError:
+                        form.add_error(None, f"存在しない乗車タイプです： {row[3]}")
+
                 try:
-                    instance.date = datetime.strptime(row[0], '%Y/%m/%d').date()
+                    if row[4]:  # データが記載されている場合のみ一致を確認
+                        customer = CustomerInformation.objects.filter(customer_name=row[4]).first()
+                        if customer:
+                            instance.customer_name = customer
+                        else:
+                            form.add_error(None, f"顧客データが存在しません： {row[4]}")
+                except CustomerInformation.DoesNotExist:
+                    form.add_error(None, f"顧客データが存在しません： {row[4]}")
+
+                try:
+                    instance.place_from = PlaceInformation.objects.get(place_name=row[5])
+                except ObjectDoesNotExist:
+                    form.add_error(None, f"出発地の施設データが存在しません： {row[5]}")
+
+                try:
+                    instance.place_to = PlaceInformation.objects.get(place_name=row[6])
+                except ObjectDoesNotExist:
+                    form.add_error(None, f"到着地の施設データが存在しません： {row[6]}")
+
+                try:
+                    instance.start_time = datetime.strptime(row[7], '%H:%M').time()
                 except ValueError:
-                    continue
-            else:
-                instance.date = None
-            instance.car = CarInformation.objects.get(car_number=row[1])
-            instance.ride_type = row[2]
-            instance.place_from = PlaceInformation.objects.get(place_name=row[3])
-            instance.place_to = PlaceInformation.objects.get(place_name=row[4])
-            instance.start_time = row[5] or None
-            instance.arrival_time = row[6] or None
-            instance.mileage_from = row[7]
-            instance.mileage_to = row[8]
-            instance.distance = row[9]
-            instance.fare = row[10] or None
-            instance.at_stretcher = row[11]
-            if instance.at_stretcher == '〇':
-                instance.at_stretcher = True
-            elif instance.at_stretcher == '×':
-                instance.at_stretcher = False
-            instance.at_night = row[12]
-            if instance.at_night == '〇':
-                instance.at_night = True
-            elif instance.at_night == '×':
-                instance.at_night = False
+                    form.add_error(None, "開始時間の形式が正しくありません")
 
-            existing_data = SalesRecord.objects.filter(
-                date=instance.date,
-                car=instance.car,
-                ride_type=instance.ride_type,
-                place_from=instance.place_from,
-                place_to=instance.place_to,
-            ).first()
+                try:
+                    instance.arrival_time = datetime.strptime(row[8], '%H:%M').time()
+                except ValueError:
+                    form.add_error(None, "到着時間の形式が正しくありません")
 
-            if existing_data:
-                existing_data.start_time = instance.start_time
-                existing_data.arrival_time = instance.arrival_time
-                existing_data.mileage_from = instance.mileage_from
-                existing_data.mileage_to = instance.mileage_to
-                existing_data.distance = instance.distance
-                existing_data.fare = instance.fare
-                existing_data.at_stretcher = instance.at_stretcher
-                existing_data.save()
-            else:
-                instance.save()
+                if not row[9]:  # row[9]が空欄の場合はエラーメッセージを追加
+                    form.add_error(None, "運行前(km)の値が必要です")
+                else:
+                    try:
+                        instance.mileage_from = float(row[9])
+                    except ValueError:
+                        form.add_error(None, f"運行前(km)の形式が正しくありません： {row[9]}")
+
+                if not row[10]:  # row[10]が空欄の場合はエラーメッセージを追加
+                    form.add_error(None, "運行後(km)の値が必要です")
+                else:
+                    try:
+                        instance.mileage_to = float(row[10])
+                    except ValueError:
+                        form.add_error(None, f"運行後(km)の形式が正しくありません： {row[10]}")
+
+                if row[3] == '賃走':  # row[3]が"賃走"の場合のみチェック
+                    if not row[12]:  # row[12]が空欄の場合はエラーメッセージを追加
+                        form.add_error(None, "乗車タイプが賃走の場合は金額の入力が必要です")
+                    else:
+                        try:
+                            instance.fare = float(row[12])
+                        except ValueError:
+                            form.add_error(None, f"金額の形式が正しくありません： {row[12]}")
+
+                if row[13] == '〇':
+                    instance.at_stretcher = True
+                elif row[13] == '×' or not row[13]:
+                    instance.at_stretcher = False  # 空欄の場合は '×' とみなす
+                else:
+                    form.add_error(None, f"STRは'〇'か'×'で入力してください： {row[13]}")
+
+                if row[14] == '〇':
+                    instance.at_night = True
+                elif row[14] == '×' or not row[14]:
+                    instance.at_night = False  # 空欄の場合は '×' とみなす
+                else:
+                    form.add_error(None, f"深夜割増は'〇'か'×'で入力してください： {row[14]}")
+
+                instance.remarks = row[15]
+
+                try:
+                    if row[16] and row[17]:
+                        instance.added_by = User.objects.get(username=row[16])
+                        instance.revised_by = User.objects.get(username=row[17])
+                    elif row[16] and not row[17]:
+                        instance.added_by = User.objects.get(username=row[16])
+                        instance.revised_by = self.request.user  # 空欄の場合は現在のログインユーザーを使用
+                    elif not row[16] and not row[17]:
+                        instance.added_by = self.request.user  # 空欄の場合は現在のログインユーザーを使用
+                    else:
+                        instance.revised_by = User.objects.get(username=row[17])
+                except User.DoesNotExist:
+                    form.add_error(None, "存在しないユーザーが指定されています")
+
+                if not form.errors:
+                    if not row[0]:  # `row[0]`が空欄の場合、自動的に採番
+                        instance.id = None
+                    else:
+                        instance.id = row[0]
+                    # 既存のデータが存在する場合、値を更新
+                    try:
+                        existing_data = SalesRecord.objects.get(id=instance.id)
+                    except ObjectDoesNotExist:
+                        existing_data = None
+                    if existing_data:
+                        existing_data.date = instance.date
+                        existing_data.car = instance.car
+                        existing_data.ride_type = instance.ride_type
+                        existing_data.customer_name = instance.customer_name
+                        existing_data.place_from = instance.place_from
+                        existing_data.place_to = instance.place_to
+                        existing_data.start_time = instance.start_time
+                        existing_data.arrival_time = instance.arrival_time
+                        existing_data.mileage_from = instance.mileage_from
+                        existing_data.mileage_to = instance.mileage_to
+                        existing_data.distance = instance.distance
+                        existing_data.fare = instance.fare
+                        existing_data.at_stretcher = instance.at_stretcher
+                        existing_data.at_night = instance.at_night
+                        existing_data.remarks = instance.remarks
+                        existing_data.added_by = instance.added_by
+                        existing_data.revised_by = instance.revised_by
+                        existing_data.save()
+                    else:
+                        instance.save()
+
+            except IndexError:
+                form = self.get_form()  # 新しいフォームインスタンスを作成
+                form.add_error(None, "ファイルのフォーマットが正しくありません")
+
+        if rows_processed < 1:
+            form.add_error(None, "ファイルにデータがありません")
+
+        if form.errors:
+            return self.form_invalid(form)
 
         return super().form_valid(form)

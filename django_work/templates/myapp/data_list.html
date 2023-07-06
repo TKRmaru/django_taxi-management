@@ -4,10 +4,10 @@
 <h1>運行記録一覧</h1>
 <div class="content_top">
     <div class="search_area">
-        <h2>検索条件</h2>
+        <h3>検索条件</h3>
         <form method="get">
             {{ form.non_field_errors }}
-            <div class="search_field">
+            <div class="search_field date_search">
                 {{ form.date_begin.errors }}
                 {{ form.date_end.errors }}
                 <label for="{{ form.date_begin.id_for_label }}">日付:</label>
@@ -30,7 +30,7 @@
                 <label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}:</label>
                 {{ form.customer_name }}
             </div>
-            <div class="address_search">
+            <div class="split_search">
                 <div class="search_field">
                     {{ form.place_from.errors }}
                     <label for="{{ form.place_from.id_for_label }}">{{ form.place_from.label }}:</label>
@@ -60,6 +60,18 @@
                 <label for="{{ form.at_night.id_for_label }}">{{ form.at_night.label }}:</label>
                 {{ form.at_night }}
             </div>
+            <div class="split_search">
+                <div class="search_field">
+                    {{ form.added_by.errors }}
+                    <label for="{{ form.added_by.id_for_label }}">{{ form.added_by.label }}:</label>
+                    {{ form.added_by }}
+                </div>
+                <div class="search_field">
+                    {{ form.revised_by.errors }}
+                    <label for="{{ form.revised_by.id_for_label }}">{{ form.revised_by.label }}:</label>
+                    {{ form.revised_by }}
+                </div>
+            </div>
             <div class="form_btn">
                 <input type="submit" value="検索">
                 <a href="{% url 'myapp:data_list' %}" class="reset_btn">条件リセット</a>
@@ -86,65 +98,162 @@
         </table>
     </div>
 </div>
-<div class="result_area">
-    <h2>検索結果</h2>
-    <table border="1" style="border-collapse: collapse">
-        <tr class="table_header">
-            <th>No.</th>
-            <th>日付</th>
-            <th>搬送車</th>
-            <th>乗車タイプ</th>
-            <th>顧客名</th>
-            <th>出発地</th>
-            <th>到着地</th>
-            <th>出発時刻</th>
-            <th>到着時刻</th>
-            <th>運行前(km)</th>
-            <th>運行後(km)</th>
-            <th>走行距離(km)</th>
-            <th>金額(円)</th>
-            <th>STR</th>
-            <th>深割</th>
-            <th colspan="3"></th>
-        </tr>
-        {% for salesrecord in salesrecord_list %}
-        <tr>
-            <td><span>{{ forloop.counter }}.</span></td>
-            <td>{{ salesrecord.date|date:'Y/m/d' }}</td>
-            <td><a href="{% url 'myapp:car_update' salesrecord.car.id %}">{{ salesrecord.car }}</a></td>
-            <td>{% if salesrecord.ride_type == '迎車' %}迎車
-                {% elif salesrecord.ride_type == '賃走' %}賃走
-                {% elif salesrecord.ride_type == '回送' %}回送
-                {% else %}{% endif %}</td>
-            <td>{% if salesrecord.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ salesrecord.customer_name }}</a>
-                {% else %}{% endif %}</td>
-            <td><a href="{% url 'myapp:place_detail' salesrecord.place_from.id %}">{{ salesrecord.place_from }}</a></td>
-            <td><a href="{% url 'myapp:place_detail' salesrecord.place_to.id %}">{{ salesrecord.place_to }}</a></td>
-            <td>{% if salesrecord.start_time %}{{ salesrecord.start_time }}
-                {% else %}{% endif %}</td>
-             <td>{% if salesrecord.arrival_time %}{{ salesrecord.arrival_time }}
-                {% else %}{% endif %}</td>
-            <td>{% if salesrecord.mileage_from %}{{ salesrecord.mileage_from|intcomma }}
-                {% else %}{% endif %}</td>
-            <td>{% if salesrecord.mileage_to %}{{ salesrecord.mileage_to|intcomma }}
-                {% else %}{% endif %}</td>
-            <td>{% if salesrecord.distance %}{{ salesrecord.distance|intcomma }}
-                {% else %}{% endif %}</td>
-            <td>{% if salesrecord.fare %}{{ salesrecord.fare|intcomma }}
-                {% else %}{% endif %}</td>
-            <td class="text_center">
-                {% if salesrecord.at_stretcher %} ○
-                {% else %} ×
-                {% endif %}</td>
-            <td class="text_center">
-                {% if salesrecord.at_night %} ○
-                {% else %} ×
-                {% endif %}</td>
-            <td class="tab"><a href="{% url 'myapp:data_detail' salesrecord.id %}">詳細</a></td>
-            <td class="tab hidden"><a href="{% url 'myapp:data_update' salesrecord.id %}">更新</a></td>
-            <td class="tab hidden"><a href="{% url 'myapp:data_delete' salesrecord.id %}">削除</a></td>
-        </tr>
-        {% endfor %}
+
+<div class="result_area result_desktop" id="list_desktop">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr class="table_header">
+                <th rowspan="2">No.</th>
+                <th rowspan="2">日付</th>
+                <th rowspan="2">搬送車</th>
+                <th rowspan="2">乗車タイプ</th>
+                <th rowspan="2">顧客名</th>
+                <th>出発地</th>
+                <th>到着地</th>
+                <th rowspan="2">運行前(km)</th>
+                <th rowspan="2">運行後(km)</th>
+                <th rowspan="2">走行距離</th>
+                <th rowspan="2">金額(円)</th>
+                <th rowspan="2">STR</th>
+                <th rowspan="2">深割</th>
+                <th rowspan="2">登録者</th>
+                <th rowspan="2">更新者</th>
+                <th rowspan="2" colspan="3"></th>
+            </tr>
+            <tr>
+                <th>出発時刻</th>
+                <th>到着時刻</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for salesrecord in salesrecord_list %}
+            <tr>
+                <td rowspan="2"><span>{{ forloop.counter }}</span></td>
+                <td rowspan="2">{{ salesrecord.date|date:'Y/m/d' }}</td>
+                <td rowspan="2"><a href="{% url 'myapp:car_update' salesrecord.car.id %}">{{ salesrecord.car }}</a></td>
+                <td rowspan="2">{% if salesrecord.ride_type == '迎車' %}迎車
+                    {% elif salesrecord.ride_type == '賃走' %}賃走
+                    {% elif salesrecord.ride_type == '回送' %}回送
+                    {% else %}-{% endif %}</td>
+                <td rowspan="2">{% if salesrecord.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ salesrecord.customer_name }}</a>
+                    {% else %}-{% endif %}</td>
+                <td><a href="{% url 'myapp:place_detail' salesrecord.place_from.id %}">{{ salesrecord.place_from }}</a></td>
+                <td><a href="{% url 'myapp:place_detail' salesrecord.place_to.id %}">{{ salesrecord.place_to }}</a></td>
+                <td rowspan="2">{% if salesrecord.mileage_from %}{{ salesrecord.mileage_from|intcomma }}
+                    {% else %}-{% endif %}</td>
+                <td rowspan="2">{% if salesrecord.mileage_to %}{{ salesrecord.mileage_to|intcomma }}
+                    {% else %}-{% endif %}</td>
+                <td rowspan="2">{% if salesrecord.distance %}{{ salesrecord.distance|intcomma }}km
+                    {% else %}-{% endif %}</td>
+                <td rowspan="2">{% if salesrecord.fare %}{{ salesrecord.fare|intcomma }}
+                    {% else %}-{% endif %}</td>
+                <td rowspan="2">
+                    {% if salesrecord.at_stretcher %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+                <td rowspan="2">
+                    {% if salesrecord.at_night %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+                <td rowspan="2">{% if salesrecord.added_by %}{{ salesrecord.added_by }}
+                    {% else %}-{% endif %}</td>
+                <td rowspan="2">{% if salesrecord.revised_by %}{{ salesrecord.revised_by }}
+                    {% else %}-{% endif %}</td>
+                <td class="tab" rowspan="2"><a href="{% url 'myapp:data_detail' salesrecord.id %}">詳細</a></td>
+                <td class="tab" rowspan="2"><a href="{% url 'myapp:data_update' salesrecord.id %}">更新</a></td>
+                <td class="tab" rowspan="2"><a href="{% url 'myapp:data_delete' salesrecord.id %}">削除</a></td>
+            </tr>
+            <tr>
+                <td>{% if salesrecord.start_time %}{{ salesrecord.start_time }}
+                    {% else %}-{% endif %}</td>
+                <td>{% if salesrecord.arrival_time %}{{ salesrecord.arrival_time }}
+                    {% else %}-{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="result_area result_mobile" id="list_mobile">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="5" width="1.2rem">No.</th>
+                <th>日付</th>
+                <th>出発地</th>
+                <th colspan="2">到着地</th>
+            </tr>
+            <tr>
+                <th>搬送車</th>
+                <th>出発時刻</th>
+                <th colspan="2">到着時刻</th>
+            </tr>
+            <tr>
+                <th>乗車タイプ</th>
+                <th>運行前</th>
+                <th colspan="2">運行後</th>
+            </tr>
+            <tr>
+                <th>顧客名</th>
+                <th>金額</th>
+                <th colspan="2">走行距離</th>
+            </tr>
+            <tr>
+                <th>登録者</th>
+                <th>更新者</th>
+                <th>STR</th>
+                <th>深割</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for salesrecord in salesrecord_list %}
+            <tr class="first_tbody_tr">
+                <td rowspan="5"><a href="{% url 'myapp:data_detail' salesrecord.id %}">{{ forloop.counter }}</a></td>
+                <td>{{ salesrecord.date|date:'Y/m/d' }}</td>
+                <td><a href="{% url 'myapp:place_detail' salesrecord.place_from.id %}">{{ salesrecord.place_from }}</a></td>
+                <td colspan="2"><a href="{% url 'myapp:place_detail' salesrecord.place_to.id %}">{{ salesrecord.place_to }}</a></td>
+            </tr>
+            <tr>
+                <td><a href="{% url 'myapp:car_update' salesrecord.car.id %}">{{ salesrecord.car }}</a></td>
+                <td>{% if salesrecord.start_time %}{{ salesrecord.start_time }}
+                    {% else %}-{% endif %}</td>
+                <td colspan="2">{% if salesrecord.arrival_time %}{{ salesrecord.arrival_time }}
+                    {% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td>{% if salesrecord.ride_type == '迎車' %}迎車
+                    {% elif salesrecord.ride_type == '賃走' %}賃走
+                    {% elif salesrecord.ride_type == '回送' %}回送
+                    {% else %}-{% endif %}</td>
+                <td>{% if salesrecord.mileage_from %}{{ salesrecord.mileage_from|intcomma }}km
+                    {% else %}-{% endif %}</td>
+                <td colspan="2">{% if salesrecord.mileage_to %}{{ salesrecord.mileage_to|intcomma }}km
+                    {% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td>{% if salesrecord.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ salesrecord.customer_name }}</a>
+                    {% else %}-{% endif %}</td>
+                <td>{% if salesrecord.fare %}{{ salesrecord.fare|intcomma }}円
+                    {% else %}-{% endif %}</td>
+                <td colspan="2">{% if salesrecord.distance %}{{ salesrecord.distance|intcomma }}km
+                    {% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td>{% if salesrecord.added_by %}{{ salesrecord.added_by }}
+                    {% else %}-{% endif %}</td>
+                <td>{% if salesrecord.revised_by %}{{ salesrecord.revised_by }}
+                    {% else %}-{% endif %}</td>
+                <td>{% if salesrecord.at_stretcher %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+                <td>{% if salesrecord.at_night %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 <div class="pagination">

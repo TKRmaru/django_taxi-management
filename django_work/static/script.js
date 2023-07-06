@@ -17,6 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var fareWrapper = document.getElementById('fare_wrapper');
     var checkboxWrapper = document.getElementById('checkbox_wrapper');
 
+    var carField = document.getElementById('id_car');
+    var mileageFromField = document.getElementById('id_mileage_from');
+    var mileageToField = document.getElementById('id_mileage_to');
+
+
+
     function toggleInputField() {
         if (rideTypeField.value === '賃走') {
             customerNameWrapper.style.display = 'block';
@@ -28,7 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxWrapper.style.display = 'none';
         }
     }
-    rideTypeField.addEventListener('change', toggleInputField);
-    toggleInputField();
-});
 
+    function updateMileageFrom() {
+        var carId = carField.value;
+        if (carId !== '') {
+            fetch('/myapp/get_car_mileage/' + carId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    mileageFromField.value = data.car_mileage;
+                    mileageToField.value = data.car_mileage;
+                });
+        } else {
+            mileageFromField.value = '';
+            mileageToField.value = '';
+        }
+    }
+
+
+    rideTypeField.addEventListener('change', toggleInputField);
+    carField.addEventListener('change', updateMileageFrom);
+    toggleInputField();
+    updateMileageFrom();
+});

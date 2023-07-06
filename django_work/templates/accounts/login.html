@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ja">
+<head>
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    {% block title %}TAXI_SYSTEM{% endblock %}
+  </title>
+</head>
+<body>
+<div class="accounts_container">
+    <div class="accounts_header">
+        <h1>運行記録管理システム</h1>
+    </div>
+    <div class="accounts_main">
+        <div class="accounts_form">
+            <h2> ログインページ </h2>
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="accounts_btn" value=" ログイン ">
+            </form>
+        </div>
+        <div class="accounts_admin">
+            <ul>
+                <li><a href="{% url 'accounts:accounts_create' %}">新規ユーザー登録</a></li>
+                <li><a href="{% url 'admin:index' %}">管理者ページへ</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
