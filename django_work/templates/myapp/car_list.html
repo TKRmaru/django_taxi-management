@@ -4,7 +4,7 @@
 <h1>搬送車リスト</h1>
 <a href="{% url 'myapp:car_create' %}" class="btn_register">新規登録</a>
 <div class="search_area">
-    <h2>検索条件</h2>
+    <h3>検索条件</h3>
     <form method="get" action="{% url 'myapp:car_list' %}" class="db_search_form">
         {{ form.non_field_errors }}
         <div class="search_field">
@@ -31,33 +31,74 @@
         </div>
     </form>
 </div>
-<div class="result_area">
-    <h2>検索結果</h2>
-    <table border="1" style="border-collapse: collapse">
-        <tr class="table_header">
-            <th>No.</th>
-            <th>ナンバー</th>
-            <th>車種</th>
-            <th>走行距離</th>
-            <th>備考</th>
-            <th colspan="2"></th>
-        </tr>
-        {% for carinformation in car_list %}
-        <tr>
-            <td>{{ forloop.counter }}.</td>
-            <td>{{ carinformation.car_number }} </td>
-            <td>{% if carinformation.car_type %}{{ carinformation.car_type }}
-                {% else %}{% endif %}</td>
-            <td>{{ carinformation.car_mileage|intcomma }} km</td>
-            <td class="text_left">
-                {% if carinformation.remarks %}{{ carinformation.remarks }}
-                {% else %}{% endif %}</td>
-            <td class="tab hidden"><a href="{% url 'myapp:car_update' carinformation.id %}">更新</a></td>
-            <td class="tab hidden"><a href="{% url 'myapp:car_delete' carinformation.id %}">削除</a></td>
-        </tr>
-        {% endfor %}
+<div class="result_area result_desktop" id="result_car_desktop">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>ナンバー</th>
+                <th>車種</th>
+                <th>走行距離</th>
+                <th>備考</th>
+                <th colspan="2"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for carinformation in car_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ carinformation.car_number }} </td>
+                <td>{% if carinformation.car_type %}{{ carinformation.car_type }}
+                    {% else %}{% endif %}</td>
+                <td>{{ carinformation.car_mileage|intcomma }} km</td>
+                <td class="text_left">
+                    {% if carinformation.remarks %}{{ carinformation.remarks }}
+                    {% else %}{% endif %}</td>
+                <td class="tab hidden"><a href="{% url 'myapp:car_update' carinformation.id %}">更新</a></td>
+                <td class="tab hidden"><a href="{% url 'myapp:car_delete' carinformation.id %}">削除</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
+
+<div class="result_area result_mobile" id="result_car_mobile">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2" width="1.2rem">No.</th>
+                <th>ナンバー</th>
+                <th>走行距離</th>
+                <th rowspan="2"></th>
+            </tr>
+            <tr>
+                <th>車種</th>
+                <th>備考</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for carinformation in car_list %}
+            <tr class="first_tbody_tr">
+                <td rowspan="2">{{ forloop.counter }}</td>
+                <td>{{ carinformation.car_number }} </td>
+                <td>{{ carinformation.car_mileage|intcomma }} km</td>
+                <td class="tab"><a href="{% url 'myapp:car_update' carinformation.id %}">更新</a></td>
+            </tr>
+            <tr>
+                <td>{% if carinformation.car_type %}{{ carinformation.car_type }}
+                    {% else %}{% endif %}</td>
+                <td class="text_left">
+                    {% if carinformation.remarks %}{{ carinformation.remarks }}
+                    {% else %}{% endif %}</td>
+                <td class="tab"><a href="{% url 'myapp:car_delete' carinformation.id %}">削除</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 <div class="pagination">
     <span>
         {% if page_obj.has_previous %}

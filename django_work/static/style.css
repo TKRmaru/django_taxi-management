@@ -45,13 +45,16 @@ h1{
     font-size:1.4rem;
 }
 h2{
+    font-size:1.3rem;
+}
+h3{
     font-size:1.2rem;
 }
 header a:hover {
     color: var(--grey);
     transition: .2s;
 }
-.content a:hover {
+a:hover {
     color: red;
     transition: .2s;
 }
@@ -70,19 +73,37 @@ header{
     padding: 0.6rem 0;
 }
 .wrapper {
-    max-width: 1000px;
+    max-width: 1100px;
     width: 96%;
     padding: 0 1rem;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
 }
-header a {
+header li, header a {
     color: var(--white);
     font-size: 1.3rem;
     background: var(--blue);
 }
-#data-input {
+.user_name {
+    color: var(--white);
+    font-size: 1rem;
+    border: 1px solid var(--white);
+    border-radius: 2rem;
+    position: relative;
+}
+.user_name div{
+    position: relative;
+}
+.user_name div::before{
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 1.2rem;
+    content: '\f007';
+    position: absolute;
+    left: -20px;
+}
+.data-input {
     border: 1px solid rgba(255,255,255,.5);
     padding: 0 1rem;
 }
@@ -96,41 +117,174 @@ header a {
     display: none;
 }
 .main-nav {
-    width: 100%;
     position: static;
     display: flex;
     background: var(--blue);
     z-index: 2;
-    transition: .5s;
+    transition: all .5s ease;
+    align-items: center;
 }
-.main-nav li {
+.main-nav>li {
     text-align: center;
     padding: 0 0.5rem;
     margin: 0 0 0 2rem;
 }
-.main-nav.open-menu {
-    width: 25%;
+.main-nav>li:last-child{
+    margin-left: 3rem;
+    padding: 0.2rem 0.4rem 0.2rem 1.8rem;
 }
-.btn-list {
+
+.hover_list {
     position: relative;
   }
-.btn-create{
+.hover_content1{
     position: absolute;
     display: none;
-    top: 100%;
-    left: 0;
-    padding: 0.8rem 1rem 0.2rem 0.5rem;
     transition: all 0.2s ease-in-out;
-    font-size: 1.1rem;
     text-align: left;
+    padding-top: 0.6rem;
 }
-.btn-list:hover .btn-create {
+.hover_content1 li{
+    padding: 0.2rem 0.7rem;
+    position: relative;
+}
+.hover_content1 li a:first-child{
+    font-size: 1.2rem;
+}
+.hover_content2{
+    position: absolute;
+    display: none;
+    transition: all 0.2s ease-in-out;
+    font-size: 1rem;
+    width: 110px;
+    top: 105%;
+    left:-10px;
+    padding: 1rem 0 0.3rem 0;
+}
+.hover_list:hover .hover_content1,
+.user_name:hover .hover_content2,
+.hover_content1 li:nth-child(1):hover .btn_create1,
+.hover_content1 li:nth-child(2):hover .btn_create2,
+.hover_content1 li:nth-child(3):hover .btn_create3{
     display: block;
     transition: all 0.2s ease-in-out;
+}
+.btn_create1, .btn_create2, .btn_create3{
+    position: absolute;
+    display: none;
+    top: 5px;
+    right: -95px;
+    padding: 0.1rem 1rem 0.1rem 0.6rem;
+    transition: all 0.2s ease-in-out;
+    text-align: left;
+    font-size: 1rem;
+    border-radius: 2rem;
 }
 /*
 CONTENTS
 ================================================ */
+/* Accounts&Loginページ */
+.accounts_container{
+    border: 1px solid var(--grey);
+    border-radius: 4px;
+    width: 90%;
+    max-width: 500px;
+    min-width: 300px;
+    margin: 100px auto;
+    height: auto;
+}
+.accounts_header{
+    background-color: var(--light-blue);
+    text-align: center;
+    padding: 12px;
+}
+.accounts_form{
+    padding: 20px 20px 0;
+}
+.accounts_form h2{
+    text-align: center;
+}
+.accounts_form form p{
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.8rem;
+}
+.accounts_form form label{
+    line-height: 2rem;
+}
+.accounts_form form input{
+    padding: 0.4rem;
+}
+.accounts_btn{
+    display: block;
+    margin: 1.5rem auto 2.5rem;
+    padding: 0.5rem;
+}
+.accounts_admin{
+    border-top: 1px solid var(--grey);
+    width: 90%;
+    margin: 0 auto;
+}
+.accounts_admin ul{
+    width: 130px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem 0;
+}
+.accounts_admin a{
+    display: block;
+    font-size: 0.9rem;
+    border: 1px solid var(--grey);
+    border-radius: 2rem;
+    margin-bottom: 1rem;
+    padding: 0.3rem;
+}
+.helptext, .accounts_form li{
+    font-size: 0.9rem;
+}
+/* Homeページ */
+.home_list{
+    flex-direction: column;
+    align-items: center;
+}
+.home_list a{
+    font-size: 1.2rem;
+    display: block;
+    padding: 0.4rem 0;
+}
+.home_list>div{
+    margin: 1rem 0;
+}
+.home_data-input {
+    border: 1px solid var(--grey);
+    padding: 0 1rem;
+    background-color: var(--light-green);
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+.home_data-input a{
+    font-size: 1.4rem;
+}
+.home_list>div:nth-child(n+2){
+    border-top: 1px solid var(--grey);
+    width: 100%;
+    max-width: 500px;
+}
+.home_list>div h2,.home_list>div ul{
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 1rem;
+}
+
+.home_admin a{
+    font-size: 0.9rem;
+    border: 1px solid var(--grey);
+    border-radius: 2rem;
+    margin-bottom: 0.6rem;
+    width: auto;
+}
+
 /* create&updateページ */
 .register_form{
     margin: 1.2rem auto 0 auto;
@@ -193,7 +347,7 @@ CONTENTS
     color: #00f;
 }
 /* 検索リスト */
-h2::before{
+h3::before{
     content: '';
     width: 6px;
     height: 1.2rem;
@@ -215,6 +369,7 @@ h2::before{
     flex-direction: row;
     align-items: flex-end;
 }
+
 .search_area form{
     margin-bottom: 2rem;
     border: 1px solid black;
@@ -229,9 +384,13 @@ h2::before{
 .search_field input, .search_field select{
     height: 1.3rem;
 }
-.address_search{
+.date_search select{
+    width: 3rem;
+
+}
+.split_search{
     display: flex;
-    width: 22%;
+    width: 85%;
     min-width: 265px;
     justify-content: space-between;
 }
@@ -239,9 +398,9 @@ h2::before{
     width: 80px;
 }
 .form_btn {
-    margin-top: 0.3rem;
+    margin-top: 1rem;
     display: flex;
-    width: 220px;
+    width: 200px;
     justify-content: space-between;
 }
 .form_btn input{
@@ -266,17 +425,40 @@ h2::before{
     width:300px;
     background-color: #dedad7;
 }
+.result_area {
+    overflow: auto;
+    max-height: 80vh;
+}
 .result_area table {
     width: 100%;
     max-width : 1200px;
+    border-collapse: collapse;
+    border: 2px solid var(--grey);
+}
+.result_desktop th, .result_desktop td{
+    border: 1px solid var(--grey);
+}
+.result_mobile{
+    display: none;
+}
+.result_area thead{
+    background: var(--light-blue);
+    /* position: sticky;
+    top: 0; */
+    border-bottom: 3px double var(--grey);
 }
 .result_area table tr{
     height:2rem;
 }
-.table_header{
-    background: var(--light-blue);
+
+.result_area tbody tr:nth-child(2n){
+    background: var(--light-green);
 }
-.result_area tr:nth-child(2n+3){
+
+#list_desktop.result_area tbody tr:nth-child(2n){
+    background: initial;
+}
+#list_desktop.result_area tbody tr:nth-child(4n+3), #list_desktop.result_area tbody tr:nth-child(4n+4){
     background: var(--light-green);
 }
 
@@ -285,6 +467,9 @@ h2::before{
 }
 .result_area .text_left{
     text-align: left;
+}
+.tab{
+    width: 45px;
 }
 .tab a{
     padding: 0.2rem;
@@ -306,6 +491,10 @@ h2::before{
     display:flex;
     flex-direction: column;
 }
+.errorlist{
+    margin-bottom: 1rem;
+    color: #f00;
+}
 /* ページネーション */
 .pagination{
     margin-top:10px;
@@ -326,6 +515,7 @@ h2::before{
     color: #fff;
     justify-content: center;
 }
+
 
 
 /* 詳細ページ */
@@ -365,16 +555,109 @@ TABLET SIZE
         display: initial;
     }
     .main-nav {
-        width: 0;
         position: absolute;
         top: 42px;
         right: 0;
         flex-direction: column;
+        translate: 100vw;
     }
-    .main-nav li {
+    .main-nav.open-menu {
+        width: 42%;
+        max-width: 200px;
+        translate: 0;
+    }
+    .main-nav>li {
         margin: 1rem 0;
     }
-    .btn-list:hover .btn-create {
+    .main-nav>li:last-child {
+        margin-left: 0;
+    }
+    .hover_content1 {
+        position: initial;
+        padding-top: 0;
+        text-align: center;
+    }
+    .hover_content2{
+        left:-20px
+    }
+    .hover_content1 li:nth-child(1):hover .btn_create1,
+    .hover_content1 li:nth-child(2):hover .btn_create2,
+    .hover_content1 li:nth-child(3):hover .btn_create3 {
         display: none;
     }
+    .hover_list:active .hover_content1,
+    .user_name:active .hover_content2{
+        display: block;
+        transition: all 0.2s ease-in-out;
+    }
 }
+/*
+MOBILE SIZE
+================================================ */
+@media (max-width: 600px) {
+    .content_top{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .result_desktop{
+        display: none;
+    }
+    .result_mobile{
+        display: initial;
+    }
+    .result_area table tr {
+        height: 1.6rem;
+    }
+    .result_area tbody tr:nth-child(2n) {
+        background: initial;
+    }
+    #summary_mobile tbody tr:nth-child(8n+5),
+    #summary_mobile tbody tr:nth-child(8n+6),
+    #summary_mobile tbody tr:nth-child(8n+7),
+    #summary_mobile tbody tr:nth-child(8n+8),
+    #list_mobile tbody tr:nth-child(10n+6),
+    #list_mobile tbody tr:nth-child(10n+7),
+    #list_mobile tbody tr:nth-child(10n+8),
+    #list_mobile tbody tr:nth-child(10n+9),
+    #list_mobile tbody tr:nth-child(10n+10),
+    #result_car_mobile tbody tr:nth-child(4n+3),
+    #result_car_mobile tbody tr:nth-child(4n+4),
+    #result_customer_mobile tbody tr:nth-child(6n+4),
+    #result_customer_mobile tbody tr:nth-child(6n+5),
+    #result_customer_mobile tbody tr:nth-child(6n+6),
+    #result_place_mobile tbody tr:nth-child(4n+3),
+    #result_place_mobile tbody tr:nth-child(4n+4){
+        background: var(--light-green);
+    }
+    #result_customer_mobile .tab{
+        width: initial;
+    }
+    .result_mobile th, .result_mobile td{
+        border: 1px dashed var(--grey);
+    }
+    .first_tbody_tr{
+        border-top: 2px solid var(--grey);
+    }
+
+    .btn_register_btm{
+        margin: 2rem auto;
+    }
+    .data_detail_table th{
+        min-width: initial;
+    }
+
+    .register_form {
+        width: 89%;
+    }
+    .register_form label{
+        width: initial;
+    }
+    .split_area{
+        justify-content: space-between;
+    }
+    .detail_table{
+    margin: 1.5rem auto;
+    }
+}
+/* MAIN */
+

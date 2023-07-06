@@ -45,7 +45,12 @@
         </div>
     </div>
     <div class="split_area">
-        <div class="input_field">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------------</div>
+        <div class="input_field">
+<!--            <label></label>-->
+<!--            <p>-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</p>-->
+            <label for="{{ form.mileage_from.id_for_label }}">{{ form.mileage_from.label }}:</label>
+            {{ form.mileage_from }}
+        </div>
         <div class="input_field">
             <label for="{{ form.mileage_to.id_for_label }}">{{ form.mileage_to.label }}:</label>
             {{ form.mileage_to }}

@@ -15,8 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from myapp.views import get_car_mileage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
     path('myapp/', include('myapp.urls')),
+    path('myapp/get_car_mileage/<int:car_id>/', get_car_mileage, name='get_car_mileage')
+
 ]

@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, RegexValidator
 from django.utils import timezone
-
+from django.contrib.auth.models import User
 
 class CarInformation(models.Model):
     car_number = models.CharField('ナンバー', max_length=4)
@@ -72,17 +72,19 @@ class SalesRecord(models.Model):
                                  related_name='PlaceTo')
     start_time = models.TimeField('出発時刻', blank=True, null=True, default=timezone.now)
     arrival_time = models.TimeField('到着時刻', blank=True, null=True, default=timezone.now)
-    mileage_from = models.PositiveIntegerField('メーター(前)', validators=[MaxValueValidator(1000000000)])
-    mileage_to = models.PositiveIntegerField('メーター(後)', validators=[MaxValueValidator(1000000000)])
+    mileage_from = models.PositiveIntegerField('MTR(前)', validators=[MaxValueValidator(1000000000)])
+    mileage_to = models.PositiveIntegerField('MTR(後)', validators=[MaxValueValidator(1000000000)])
     distance = models.PositiveIntegerField('走行距離', validators=[MaxValueValidator(1000000000)], blank=True,
                                            null=True)
     fare = models.PositiveIntegerField('料金', validators=[MaxValueValidator(1000000000)], blank=True, null=True)
     at_stretcher = models.BooleanField('ストレッチャー', default=False)
     at_night = models.BooleanField('深夜割増', default=False)
     remarks = models.TextField('備考', blank=True, null=True, max_length=1000)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="登録者", null=True, blank=True, related_name="added_by")
+    revised_by = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="更新者", null=True, blank=True, related_name="revised_by")
 
     def __str__(self):
-        return self.date
+        return str(self.date)
 
     def save(self, *args, **kwargs):
         if not self.mileage_from:

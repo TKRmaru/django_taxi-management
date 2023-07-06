@@ -2,48 +2,125 @@
 {% load humanize %}
 {% block content %}
 <form method="post">{% csrf_token %}
-<div class="result_area">
-    <table border="1" style="border-collapse: collapse">
-    <tr class="table_header">
-        <th>日付</th>
-        <th>搬送車</th>
-        <th>乗車タイプ</th>
-        <th>顧客名</th>
-        <th>出発地</th>
-        <th>到着地</th>
-        <th>出発時刻</th>
-        <th>到着時刻</th>
-        <th>運行前(km)</th>
-        <th>運行後(km)</th>
-        <th>走行距離(km)</th>
-        <th>金額(円)</th>
-        <th>STR</th>
-        <th>深割</th>
-    </tr>
-    <tr>
-        <td>{{ object.date|date:'Y/m/d' }}</td>
-        <td>{{ object.car }}</td>
-        <td>{{ object.ride_type }}</td>
-        <td>{% if object.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ object.customer_name }}</a>
-            {% else %}{% endif %}</td>
-        <td>{{ object.place_from }}</td>
-        <td>{{ object.place_to }}</td>
-        <td>{{ object.start_time }}</td>
-        <td>{{ object.arrival_time }}</td>
-        <td>{{ object.mileage_from|intcomma }}</td>
-        <td>{{ object.mileage_to|intcomma }}</td>
-        <td>{{ object.distance|intcomma }}</td>
-        <td>{% if object.fare %}{{ object.fare|intcomma }} 円
-            {% else %}{% endif %}</td>
-        <td>{% if object.at_stretcher %} ○
-            {% else %} ×
-            {% endif %}</td>
-        <td>{% if object.at_night %} ○
-            {% else %} ×
-            {% endif %}</td>
-    </tr>
+<div class="result_area result_desktop">
+    <table>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>搬送車</th>
+                <th>乗車タイプ</th>
+                <th>顧客名</th>
+                <th>出発地</th>
+                <th>到着地</th>
+                <th>出発時刻</th>
+                <th>到着時刻</th>
+                <th>運行前(km)</th>
+                <th>運行後(km)</th>
+                <th>走行距離(km)</th>
+                <th>金額(円)</th>
+                <th>STR</th>
+                <th>深割</th>
+                <th>登録者</th>
+                <th>更新者</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ object.date|date:'Y/m/d' }}</td>
+                <td>{{ object.car }}</td>
+                <td>{{ object.ride_type }}</td>
+                <td>{% if object.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ object.customer_name }}</a>
+                    {% else %}{% endif %}</td>
+                <td>{{ object.place_from }}</td>
+                <td>{{ object.place_to }}</td>
+                <td>{{ object.start_time }}</td>
+                <td>{{ object.arrival_time }}</td>
+                <td>{{ object.mileage_from|intcomma }}</td>
+                <td>{{ object.mileage_to|intcomma }}</td>
+                <td>{{ object.distance|intcomma }}</td>
+                <td>{% if object.fare %}{{ object.fare|intcomma }} 円
+                    {% else %}{% endif %}</td>
+                <td>{% if object.at_stretcher %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+                <td>{% if object.at_night %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+                <td>{% if object.added_by %}{{ object.added_by }}{% else %}-{% endif %}</td>
+                <td>{% if object.revised_by %}{{ object.revised_by }}{% else %}-{% endif %}</td>
+            </tr>
+        </tbody>
     </table>
 </div>
+<div class="result_area result_mobile">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>出発地</th>
+                <th colspan="2">到着地</th>
+            </tr>
+            <tr>
+                <th>搬送車</th>
+                <th>出発時刻</th>
+                <th colspan="2">到着時刻</th>
+            </tr>
+            <tr>
+                <th>乗車タイプ</th>
+                <th>運行前</th>
+                <th colspan="2">運行後</th>
+            </tr>
+            <tr>
+                <th>顧客名</th>
+                <th>金額</th>
+                <th colspan="2">走行距離</th>
+            </tr>
+            <tr>
+                <th>登録者</th>
+                <th>更新者</th>
+                <th>STR</th>
+                <th>深割</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ object.date|date:'Y/m/d' }}</td>
+                <td>{{ object.place_from }}</td>
+                <td colspan="2">{{ object.place_to }}</td>
+            </tr>
+            <tr>
+                <td>{{ object.car }}</td>
+                <td>{{ object.start_time }}</td>
+                <td colspan="2">{{ object.arrival_time }}</td>
+            </tr>
+            <tr>
+                <td>{{ object.ride_type }}</td>
+                <td>{{ object.mileage_from|intcomma }}km</td>
+                <td colspan="2">{{ object.mileage_to|intcomma }}km</td>
+            </tr>
+            <tr>
+                <td>{% if object.customer_name %}<a href="{% url 'myapp:customer_detail' salesrecord.customer_name.id %}">{{ object.customer_name }}</a>
+                    {% else %}-{% endif %}</td>
+                <td>{% if object.fare %}{{ object.fare|intcomma }}円
+                    {% else %}-{% endif %}</td>
+                <td colspan="2">{{ object.distance|intcomma }}km</td>
+            </tr>
+            <tr>
+                <td>{% if object.added_by %}{{ object.added_by }}{% else %}-{% endif %}</td>
+                <td>{% if object.revised_by %}{{ object.revised_by }}{% else %}-{% endif %}</td>
+                <td>{% if object.at_stretcher %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+                <td>{% if object.at_night %} ○
+                    {% else %} ×
+                    {% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
     <br>
     <p>を削除してもよろしいですか?</p>
     <input type="submit" value="削除" class="btn_register">

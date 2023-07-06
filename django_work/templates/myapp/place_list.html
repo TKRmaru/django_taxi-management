@@ -4,7 +4,7 @@
 <h1>施設リスト</h1>
 <a href="{% url 'myapp:place_create' %}" class="btn_register">新規登録</a>
 <div class="search_area">
-    <h2>検索条件</h2>
+    <h3>検索条件</h3>
     <form method="get" action="{% url 'myapp:place_list' %}" class="db_search_form">
         {{ form.non_field_errors }}
         <div class="search_field">
@@ -23,32 +23,69 @@
         </div>
     </form>
 </div>
-<div class="result_area">
-    <h2>検索結果</h2>
-    <table border="1" style="border-collapse: collapse">
-        <tr class="table_header">
-            <th>No.</th>
-            <th>施設名</th>
-            <th>住所</th>
-            <th>電話番号</th>
-            <th colspan="3"></th>
-        </tr>
-        {% for placecreate in place_list %}
-        <tr>
-            <td>{{ forloop.counter }}.</td>
-            <td>{{ placecreate }}</td>
-            <td class="text_left">
-                {% if placecreate.zip_code %}　〒{{ placecreate.zip_code }}<br>{% else %}{% endif %}
-                {% if placecreate.prefecture %}　{{ placecreate.prefecture }}{% else %}{% endif %}{% if placecreate.city %}{{ placecreate.city }}<br>{% else %}{% endif %}{% if placecreate.bldg %}{{ placecreate.bldg }}{% else %}{% endif %}</td>
-            <td>{% if placecreate.tel %}
-                {{ placecreate.tel }}
-                {% else %}
-                {% endif %}</td>
-            <td class="tab"><a href="{% url 'myapp:place_detail' placecreate.id %}">詳細</a></td>
-            <td class="tab hidden"><a href="{% url 'myapp:place_update' placecreate.id %}">更新</a></td>
-            <td class="tab hidden"><a href="{% url 'myapp:place_delete' placecreate.id %}">削除</a></td>
-        </tr>
-        {% endfor %}
+<div class="result_area result_desktop" id="result_place_desktop">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>施設名</th>
+                <th>住所</th>
+                <th>電話番号</th>
+                <th colspan="3"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for placecreate in place_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ placecreate }}</td>
+                <td class="text_left">
+                    {% if placecreate.zip_code %}　〒{{ placecreate.zip_code }}<br>{% else %}{% endif %}
+                    {% if placecreate.prefecture %}　{{ placecreate.prefecture }}{% else %}{% endif %}{% if placecreate.city %}{{ placecreate.city }}<br>{% else %}{% endif %}{% if placecreate.bldg %}{{ placecreate.bldg }}{% else %}{% endif %}</td>
+                <td>{% if placecreate.tel %}
+                    {{ placecreate.tel }}
+                    {% else %}{% endif %}</td>
+                <td class="tab"><a href="{% url 'myapp:place_detail' placecreate.id %}">詳細</a></td>
+                <td class="tab"><a href="{% url 'myapp:place_update' placecreate.id %}">更新</a></td>
+                <td class="tab"><a href="{% url 'myapp:place_delete' placecreate.id %}">削除</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="result_area result_mobile" id="result_place_mobile">
+    <h3>検索結果</h3>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2" width="1.2rem">No.</th>
+                <th>施設名</th>
+                <th>電話番号</th>
+                <th rowspan="2"></th>
+            </tr>
+            <tr>
+                <th colspan="2" class="text_left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;住所</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for placecreate in place_list %}
+            <tr class="first_tbody_tr">
+                <td rowspan="2">{{ forloop.counter }}</td>
+                <td><a href="{% url 'myapp:place_detail' placecreate.id %}">{{ placecreate }}</a></td>
+                <td>{% if placecreate.tel %}
+                    {{ placecreate.tel }}
+                    {% else %}-{% endif %}</td>
+                <td class="tab"><a href="{% url 'myapp:place_update' placecreate.id %}">更新</a></td>
+            </tr>
+            <tr>
+                <td class="text_left" colspan="2">
+                    {% if placecreate.zip_code %}〒{{ placecreate.zip_code }}<br>{% else %}{% endif %}
+                    {% if placecreate.prefecture %}{{ placecreate.prefecture }}{% else %}{% endif %}{% if placecreate.city %}{{ placecreate.city }}<br>{% else %}{% endif %}{% if placecreate.bldg %}{{ placecreate.bldg }}{% else %}{% endif %}</td>
+                <td class="tab"><a href="{% url 'myapp:place_delete' placecreate.id %}">削除</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 <div class="pagination">
