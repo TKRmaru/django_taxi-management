@@ -10,8 +10,16 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import environ
 from pathlib import Path
 import os
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
+env.read_env('.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +28,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-on^kr!w4p_3o)s(t+6ridy5)lm6+b8cn@hloo^!%led(kt)xo9'
+# SECRET_KEY = 'django-insecure-on^kr!w4p_3o)s(t+6ridy5)lm6+b8cn@hloo^!%led(kt)xo9'
+SECRET_KEY = env('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 # Application definition
 NUMBER_GROUPING = 3
 
@@ -85,15 +95,18 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'django_work_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres1995',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_work_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres1995',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+    'default': env.db(),
 }
 
 # Password validation
