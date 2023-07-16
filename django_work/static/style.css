@@ -565,6 +565,7 @@ TABLET SIZE
         width: 42%;
         max-width: 200px;
         translate: 0;
+        height: 66vh;
     }
     .main-nav>li {
         margin: 1rem 0;
@@ -576,9 +577,10 @@ TABLET SIZE
         position: initial;
         padding-top: 0;
         text-align: center;
+        display: block;
     }
     .hover_content2{
-        left:-20px
+        display: block;
     }
     .hover_content1 li:nth-child(1):hover .btn_create1,
     .hover_content1 li:nth-child(2):hover .btn_create2,
@@ -659,5 +661,5 @@ MOBILE SIZE
     margin: 1.5rem auto;
     }
 }
-/* MAIN */
+
 
