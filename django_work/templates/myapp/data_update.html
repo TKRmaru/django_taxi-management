@@ -5,21 +5,21 @@
 <form method="post" enctype="multipart/form-data" class="h-adr register_form">{% csrf_token %}
     {% bootstrap_javascript jquery='full' %}
     {{ form.media }}
-        <div class="input_field">
+    <div class="input_field">
         <label for="{{ form.date.id_for_label }}">{{ form.date.label }}:</label>
         {{ form.date }}
     </div>
     <div class="split_area">
         <div class="input_field">
             <label for="{{ form.car.id_for_label }}">{{ form.car.label }}:</label>
-            {{ form.car }}
+            {{ form.car }}{{ form.car.field.choices|safe }}
         </div>
         <div class="input_field">
             <label for="{{ form.ride_type.id_for_label }}">{{ form.ride_type.label }}:</label>
             {{ form.ride_type }}
         </div>
     </div>
-    <div class="input_field">
+    <div class="input_field" id="customer_name_wrapper" style="display: none;">
         <label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}:</label>
         {{ form.customer_name }}
     </div>
@@ -53,11 +53,22 @@
             {{ form.mileage_to }}
         </div>
     </div>
-    <div class="input_field">
+    <!-- フォームのエラーメッセージを表示するための空のエレメント -->
+    <div class="split_area">
+        <div></div>
+        <div id="mileage-error" style="display: none; color:red;">
+            <strong>Error:</strong> MTR(後)を更新してください。
+        </div>
+    </div>
+    <div class="input_field" id="fare_wrapper" style="display: none;">
         <label for="{{ form.fare.id_for_label }}">{{ form.fare.label }}:</label>
         {{ form.fare }}
+        <!-- フォームのエラーメッセージを表示するための空のエレメント -->
+        <div id="fare-error" style="display: none; color:red;">
+            <strong>Error:</strong> 料金を入力してください。
+        </div>
     </div>
-    <div class="split_area">
+    <div class="split_area" id="checkbox_wrapper" style="display: none;">
         <div class="checkbox input_field">
             <label for="{{ form.at_stretcher.id_for_label }}">{{ form.at_stretcher.label }}:</label>
             {{ form.at_stretcher }}
@@ -71,6 +82,7 @@
         <label for="{{ form.remarks.id_for_label }}">{{ form.remarks.label }}:</label>
         {{ form.remarks }}
     </div>
+
     <input type="submit" id="save" value="更新" class="btn_register_btm">
 </form>
 <div class="btn_back">

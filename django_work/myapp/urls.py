@@ -1,11 +1,10 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.decorators import login_required
-from myapp.views import get_car_mileage
 
 app_name = 'myapp'
 urlpatterns = [
-    path('home/', login_required(views.Home.as_view()), name='home'),
+    path('', login_required(views.Home.as_view()), name='home'),
     path('car_create/', login_required(views.CarCreateView.as_view()), name='car_create'),
     path('car_list/', login_required(views.CarListView.as_view()), name='car_list'),
     path('car_update/<int:pk>', login_required(views.CarUpdateView.as_view()), name='car_update'),

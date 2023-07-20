@@ -46,8 +46,6 @@
     </div>
     <div class="split_area">
         <div class="input_field">
-<!--            <label></label>-->
-<!--            <p>-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</p>-->
             <label for="{{ form.mileage_from.id_for_label }}">{{ form.mileage_from.label }}:</label>
             {{ form.mileage_from }}
         </div>
@@ -56,9 +54,20 @@
             {{ form.mileage_to }}
         </div>
     </div>
+    <!-- フォームのエラーメッセージを表示するための空のエレメント -->
+    <div class="split_area">
+        <div></div>
+        <div id="mileage-error" style="display: none; color:red;">
+            <strong>Error:</strong> MTR(後)を更新してください。
+        </div>
+    </div>
     <div class="input_field" id="fare_wrapper" style="display: none;">
         <label for="{{ form.fare.id_for_label }}">{{ form.fare.label }}:</label>
         {{ form.fare }}
+         <!-- フォームのエラーメッセージを表示するための空のエレメント -->
+        <div id="fare-error" style="display: none; color:red;">
+            <strong>Error:</strong> 料金を入力してください。
+        </div>
     </div>
     <div class="split_area" id="checkbox_wrapper" style="display: none;">
         <div class="checkbox input_field">
@@ -77,7 +86,6 @@
 
     <input type="submit" value="登録" class="btn_register_btm">
 </form>
-{{ initial_mileage }}
 <div class="btn_back">
     <a href="{% url 'myapp:data_list' %}">売上一覧</a>
 </div>

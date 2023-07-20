@@ -15,7 +15,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 import re
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 
 
 class Home(TemplateView):
@@ -26,7 +25,7 @@ class CarCreateView(CreateView):
     model = CarInformation
     form_class = CarCreateForm
     template_name = 'myapp/car_create.html'
-    success_url = '/myapp/car_list'
+    success_url = '/car_list'
 
 
 class CarListView(ListView):
@@ -137,20 +136,20 @@ class CarUpdateView(UpdateView):
     model = CarInformation
     form_class = CarCreateForm
     template_name = 'myapp/car_update.html'
-    success_url = '/myapp/car_list'
+    success_url = '/car_list'
 
 
 class CarDeleteView(DeleteView):
     model = CarInformation
     template_name = 'myapp/delete.html'
-    success_url = '/myapp/car_list'
+    success_url = '/car_list'
 
 
 class CustomerCreateView(CreateView):
     model = CustomerInformation
     form_class = CustomerCreateForm
     template_name = 'myapp/customer_create.html'
-    success_url = '/myapp/customer_list'
+    success_url = '/customer_list'
 
 
 class CustomerListView(ListView):
@@ -248,7 +247,7 @@ class CustomerUpdateView(UpdateView):
     model = CustomerInformation
     form_class = CustomerCreateForm
     template_name = 'myapp/customer_update.html'
-    success_url = '/myapp/customer_list'
+    success_url = '/customer_list'
 
 
 class CustomerDetailView(DetailView):
@@ -267,14 +266,14 @@ class CustomerDetailView(DetailView):
 class CustomerDeleteView(DeleteView):
     model = CustomerInformation
     template_name = 'myapp/delete.html'
-    success_url = '/myapp/customer_list'
+    success_url = '/customer_list'
 
 
 class PlaceCreateView(CreateView):
     model = PlaceInformation
     form_class = PlaceCreateForm
     template_name = 'myapp/place_create.html'
-    success_url = '/myapp/place_list'
+    success_url = '/place_list'
 
 
 class PlaceListView(ListView):
@@ -370,7 +369,7 @@ class PlaceUpdateView(UpdateView):
     model = PlaceInformation
     form_class = PlaceCreateForm
     template_name = 'myapp/place_update.html'
-    success_url = '/myapp/place_list'
+    success_url = '/place_list'
 
 
 class PlaceDetailView(DetailView):
@@ -382,14 +381,14 @@ class PlaceDetailView(DetailView):
 class PlaceDeleteView(DeleteView):
     model = PlaceInformation
     template_name = 'myapp/delete.html'
-    success_url = '/myapp/place_list'
+    success_url = '/place_list'
 
 
 class DataInputView(LoginRequiredMixin, CreateView):
     model = SalesRecord
     form_class = DataInputForm
     template_name = 'myapp/data_input.html'
-    success_url = '/myapp/data_input'
+    success_url = '/data_input'
 
     def form_valid(self, form):
         # フォームのバリデーションに成功した場合の処理
@@ -853,7 +852,7 @@ class DataUpdateView(UpdateView):
     model = SalesRecord
     form_class = DataUpdateForm
     template_name = 'myapp/data_update.html'
-    success_url = '/myapp/data_list'
+    success_url = '/data_list'
 
     def form_valid(self, form):
         user = self.request.user
@@ -866,11 +865,11 @@ class DataUpdateView(UpdateView):
 class DataDeleteView(DeleteView):
     model = SalesRecord
     template_name = 'myapp/data_delete.html'
-    success_url = '/myapp/data_list'
+    success_url = '/data_list'
 
 
 class CarCSVImportView(FormView):
-    success_url = '/myapp/car_list'
+    success_url = '/car_list'
     template_name = 'myapp/import.html'
     form_class = CSVUploadForm
 
@@ -927,7 +926,7 @@ class CarCSVImportView(FormView):
 
 class CustomerCSVImportView(FormView):
     template_name = 'myapp/import.html'
-    success_url = '/myapp/customer_list'
+    success_url = '/customer_list'
     form_class = CSVUploadForm
 
     def form_valid(self, form):
@@ -992,7 +991,7 @@ class CustomerCSVImportView(FormView):
 
 
 class PlaceCSVImportView(FormView):
-    success_url = '/myapp/place_list'
+    success_url = '/place_list'
     template_name = 'myapp/import.html'
     form_class = CSVUploadForm
 
@@ -1050,7 +1049,7 @@ class PlaceCSVImportView(FormView):
 
 
 class DataCSVImportView(FormView):
-    success_url = '/myapp/data_list'
+    success_url = '/data_list'
     template_name = 'myapp/import.html'
     form_class = CSVUploadForm
 

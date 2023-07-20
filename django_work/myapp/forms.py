@@ -104,11 +104,9 @@ class DataInputForm(forms.ModelForm):
     )
     mileage_from = forms.IntegerField(
         label="MTR(前)",
-        initial=0,  # 初期値を設定
     )
     mileage_to = forms.IntegerField(
         label="MTR(後)",
-        initial=0,  # 初期値を設定
     )
 
     class Meta:
