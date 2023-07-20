@@ -77,5 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
     rideTypeField.addEventListener('change', toggleInputField);
     carField.addEventListener('change', updateMileageFrom);
     toggleInputField();
-    updateMileageFrom();
 });
+
+updateMileageFrom();
