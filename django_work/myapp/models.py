@@ -99,3 +99,17 @@ class SalesRecord(models.Model):
         else:
             self.car.car_mileage = self.mileage_to
         self.car.save()
+
+    def delete(self, *args, **kwargs):
+        # 削除されるデータのmileage_toの値を取得
+        deleted_mileage_to = self.mileage_to
+
+        super().delete(*args, **kwargs)
+
+        latest_mileage = SalesRecord.objects.filter(car=self.car).order_by('-mileage_to').first()
+        if latest_mileage:
+            self.car.car_mileage = latest_mileage.mileage_to
+        else:
+            self.car.car_mileage = deleted_mileage_to  # 削除されるデータのmileage_toの値を使用
+        self.car.save()
+
