@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth.decorators import login_required
+from .views import get_car_mileage
 
 app_name = 'myapp'
 urlpatterns = [
@@ -20,6 +21,7 @@ urlpatterns = [
     path('place_update/<int:pk>', login_required(views.PlaceUpdateView.as_view()), name='place_update'),
     path('place_delete/<int:pk>', login_required(views.PlaceDeleteView.as_view()), name='place_delete'),
     path('data_input/', login_required(views.DataInputView.as_view()), name='data_input'),
+    path('myapp/get_car_mileage/<int:car_id>/', get_car_mileage, name='get_car_mileage'),
     path('data_list/', login_required(views.DataListView.as_view()), name='data_list'),
     path('data_summary/', login_required(views.DataSummaryView.as_view()), name='data_summary'),
     path('data_detail/<int:pk>', login_required(views.DataDetailView.as_view()), name='data_detail'),

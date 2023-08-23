@@ -9,10 +9,11 @@ from django.utils import timezone
 import csv, codecs
 from django.http import HttpResponse
 from django.db.models.functions import Cast
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib import messages
 import re
 from django.http import JsonResponse
 
@@ -984,8 +985,6 @@ class CustomerCSVImportView(FormView):
 
         if form.errors:
             return self.form_invalid(form)
-
-
 
         return super().form_valid(form)
 

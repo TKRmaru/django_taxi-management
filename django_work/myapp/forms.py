@@ -108,7 +108,9 @@ class DataInputForm(forms.ModelForm):
     mileage_to = forms.IntegerField(
         label="MTR(後)",
     )
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.initial['date'] = date.today()
     class Meta:
         model = SalesRecord
         fields = ('date', 'car', 'ride_type', 'customer_name', 'place_from', 'place_to', 'start_time', 'arrival_time',

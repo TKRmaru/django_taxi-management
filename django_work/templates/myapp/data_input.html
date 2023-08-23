@@ -20,51 +20,56 @@
             {{ form.ride_type }}
         </div>
     </div>
-    <div class="input_field" id="customer_name_wrapper" style="display: none;">
-        <label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}:</label>
-        {{ form.customer_name }}
+    <div class="split_area">
+        <div class="input_field" id="customer_name_wrapper" style="display: none;">
+            <label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}:</label>
+            {{ form.customer_name }}
+        </div>
     </div>
     <div class="split_area">
-        <div class="input_field">
+        <div class="input_field dp_field">
             <label for="{{ form.place_from.id_for_label }}">{{ form.place_from.label }}:</label>
             {{ form.place_from }}
         </div>
-        <div class="input_field">
+        <div class="input_field ar_field" style="display: none;" >
             <label for="{{ form.place_to.id_for_label }}">{{ form.place_to.label }}:</label>
             {{ form.place_to }}
         </div>
     </div>
     <div class="split_area">
-        <div class="input_field">
+        <div class="input_field dp_field">
             <label for="{{ form.start_time.id_for_label }}">{{ form.start_time.label }}:</label>
             {{ form.start_time }}
         </div>
-        <div class="input_field">
+        <div class="input_field ar_field" style="display: none;">
             <label for="{{ form.arrival_time.id_for_label }}">{{ form.arrival_time.label }}:</label>
             {{ form.arrival_time }}
         </div>
     </div>
     <div class="split_area">
-        <div class="input_field">
+        <div class="input_field dp_field">
             <label for="{{ form.mileage_from.id_for_label }}">{{ form.mileage_from.label }}:</label>
             {{ form.mileage_from }}
         </div>
-        <div class="input_field">
+        <div class="input_field ar_field" style="display: none;">
             <label for="{{ form.mileage_to.id_for_label }}">{{ form.mileage_to.label }}:</label>
             {{ form.mileage_to }}
         </div>
     </div>
     <!-- フォームのエラーメッセージを表示するための空のエレメント -->
     <div class="split_area">
-        <div></div>
         <div id="mileage-error" style="display: none; color:red;">
             <strong>Error:</strong> MTR(後)を更新してください。
         </div>
     </div>
-    <div class="input_field" id="fare_wrapper" style="display: none;">
-        <label for="{{ form.fare.id_for_label }}">{{ form.fare.label }}:</label>
-        {{ form.fare }}
-         <!-- フォームのエラーメッセージを表示するための空のエレメント -->
+    <div class="split_area ar_field_fare" style="visibility: hidden;">
+        <div class="input_field" id="fare_wrapper" style="display: none;">
+            <label for="{{ form.fare.id_for_label }}">{{ form.fare.label }}:</label>
+            {{ form.fare }}
+        </div>
+    </div>
+    <!-- フォームのエラーメッセージを表示するための空のエレメント -->
+    <div class="split_area">
         <div id="fare-error" style="display: none; color:red;">
             <strong>Error:</strong> 料金を入力してください。
         </div>
@@ -83,9 +88,16 @@
         <label for="{{ form.remarks.id_for_label }}">{{ form.remarks.label }}:</label>
         {{ form.remarks }}
     </div>
-
+    <div class="toggle-switch">
+        <input type="checkbox" id="toggle" class="toggle-input">
+        <label for="toggle" class="toggle-label">到着</label>
+        <label for="all_display"><input type="checkbox" id="all_display" style="height: auto;">すべて表示</label>
+    </div>
     <input type="submit" value="登録" class="btn_register_btm">
 </form>
+
+
+
 <div class="btn_back">
     <a href="{% url 'myapp:data_list' %}">売上一覧</a>
 </div>

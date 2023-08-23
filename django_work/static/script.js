@@ -50,6 +50,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+//出発情報・到着情報の切り替え
+    var departureField = document.querySelectorAll('.dp_field');
+    var arrivalField = document.querySelectorAll('.ar_field');
+    var arrivalFieldFare = document.querySelector('.ar_field_fare');
+    var toggleSwitch = document.querySelector('.toggle-input');
+    var toggleLabel = document.querySelector('.toggle-label');
+    var allDisplay = document.getElementById('all_display');
+
+    function switchFrom() {
+        if (toggleSwitch.checked) {
+            departureField.forEach(function(element) {
+                element.style.display = 'none';
+            });
+            arrivalField.forEach(function(element) {
+                element.style.display = 'block';
+            });
+            arrivalFieldFare.style.visibility = 'visible'
+        } else {
+            departureField.forEach(function(element) {
+                element.style.display = 'block';
+            });
+            arrivalField.forEach(function(element) {
+                element.style.display = 'none';
+            });
+            arrivalFieldFare.style.visibility = 'hidden'
+        }
+        if (toggleLabel.innerHTML === '出発') {
+            toggleLabel.innerHTML = '到着';
+        } else {
+            toggleLabel.innerHTML = '出発';
+        }
+    }
+
+    function showAll() {
+        if (allDisplay.checked) {
+            departureField.forEach(function(element) {
+                element.style.display = 'block';
+            });
+            arrivalField.forEach(function(element) {
+                element.style.display = 'block';
+            });
+            arrivalFieldFare.style.visibility = 'visible';
+            toggleLabel.style.visibility = 'hidden';
+        } else {
+            if (toggleSwitch.checked) {
+                departureField.forEach(function(element) {
+                    element.style.display = 'none';
+                });
+                arrivalField.forEach(function(element) {
+                    element.style.display = 'block';
+                });
+                arrivalFieldFare.style.visibility = 'visible';
+                toggleLabel.style.visibility = 'visible';
+            } else {
+                departureField.forEach(function(element) {
+                    element.style.display = 'block';
+                });
+                arrivalField.forEach(function(element) {
+                    element.style.display = 'none';
+                });
+                arrivalFieldFare.style.visibility = 'hidden';
+                toggleLabel.style.visibility = 'visible';
+            }
+        }
+    }
+
 //エラーメッセージを表示
     var mileageError = document.getElementById('mileage-error');
     var fareError = document.getElementById('fare-error');
@@ -74,6 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    toggleSwitch.addEventListener('change', switchFrom);
+    switchFrom();
+    allDisplay.addEventListener('change', showAll);
+    showAll();
     rideTypeField.addEventListener('change', toggleInputField);
     carField.addEventListener('change', updateMileageFrom);
     toggleInputField();
